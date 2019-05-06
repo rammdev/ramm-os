@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAMM OS</title>
+    <link rel="stylesheet" href="..\node_modules\material-components-web\dist\material-components-web.min.css">
+
+    <link rel="stylesheet" href="app.css">
+
+    <link rel="stylesheet" href="..\node_modules\normalize.css\normalize.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+</head>
+
+<body class="app mdc-typography">
+    <header class="mdc-top-app-bar mdc-top-app-bar--dense">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <span class="mdc-top-app-bar__title">RAMM OS</span> </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                <button class="mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
+                    <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="none" d="M0 0h24v24H0V0z" />
+                        <path
+                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                </button>
+            </section>
+        </div>
+    </header>
+    <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
+    <main class="main-content">
+        <p class="mdc-typography--body1">Hello World!</p>
+        <button class="action__close mdc-button" data-mdc-auto-init="MDCRipple"><span class="mdc-button__label">Close</span></button>
+        <button class="action__full mdc-button" data-mdc-auto-init="MDCRipple"><span class="mdc-button__label">Toggle Full Screen</span></button>
+    </main>
+</body>
+
+</html>
