@@ -1,3 +1,19 @@
-body {
-    background-color: #fafafa;
+:root {
+    --mdc-theme-primary: #3f51b5;
+    --mdc-theme-secondary: #f44336;
+    --mdc-theme-on-primary: #ffffff;
+    --mdc-theme-on-secondary: #ffffff;
+}
+
+.main-content {
+    padding: 8px
+}
+
+.mdc-top-app-bar__row {
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+}
+
+.mdc-top-app-bar__action-item--unbounded {
+    -webkit-app-region: no-drag;
 }
