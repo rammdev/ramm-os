@@ -1,3 +1,7 @@
+# LFS
+
+*.png filter=lfs diff=lfs merge=lfs -text
+
 # Common settings that generally should always be used with your language specific settings
 
 # Auto detect text files and perform LF normalization
