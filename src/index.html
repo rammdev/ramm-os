@@ -14,7 +14,7 @@
 </head>
 
 <body class="app mdc-typography">
-    <header class="mdc-top-app-bar mdc-top-app-bar--dense">
+    <header class="mdc-top-app-bar mdc-top-app-bar--short">
         <div class="mdc-top-app-bar__row">
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                 <span class="mdc-top-app-bar__title">RAMM OS</span> </section>
@@ -29,12 +29,138 @@
             </section>
         </div>
     </header>
-    <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
-    <main class="main-content">
-        <p class="mdc-typography--body1">Hello World!</p>
-        <button class="action__close mdc-button" data-mdc-auto-init="MDCRipple"><span class="mdc-button__label">Close</span></button>
-        <button class="action__full mdc-button" data-mdc-auto-init="MDCRipple"><span class="mdc-button__label">Toggle Full Screen</span></button>
+    <div class="mdc-top-app-bar--short-fixed-adjust"></div>
+    <main class="main__content">
+        <div class="app__drawer mdc-menu mdc-menu-surface" data-mdc-auto-init="MDCMenu">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="Install" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Install</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="Notifications" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path
+                                    d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Notifications</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="Files" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M9.17 6l2 2H20v10H4V6h5.17M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Files</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="Settings" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path
+                                    d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.09-.16-.26-.25-.44-.25-.06 0-.12.01-.17.03l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.06-.02-.12-.03-.18-.03-.17 0-.34.09-.43.25l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.09.16.26.25.44.25.06 0 .12-.01.17-.03l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.06.02.12.03.18.03.17 0 .34-.09.43-.25l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zm-1.98-1.71c.04.31.05.52.05.73 0 .21-.02.43-.05.73l-.14 1.13.89.7 1.08.84-.7 1.21-1.27-.51-1.04-.42-.9.68c-.43.32-.84.56-1.25.73l-1.06.43-.16 1.13-.2 1.35h-1.4l-.19-1.35-.16-1.13-1.06-.43c-.43-.18-.83-.41-1.23-.71l-.91-.7-1.06.43-1.27.51-.7-1.21 1.08-.84.89-.7-.14-1.13c-.03-.31-.05-.54-.05-.74s.02-.43.05-.73l.14-1.13-.89-.7-1.08-.84.7-1.21 1.27.51 1.04.42.9-.68c.43-.32.84-.56 1.25-.73l1.06-.43.16-1.13.2-1.35h1.39l.19 1.35.16 1.13 1.06.43c.43.18.83.41 1.23.71l.91.7 1.06-.43 1.27-.51.7 1.21-1.07.85-.89.7.14 1.13zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Settings</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="ROS AV" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">ROS AV</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="ROS Calculator" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2V7h-4v2h2z" />
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">ROS Calculator</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="Media Viewer" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M2 6H0v5h.01L0 20c0 1.1.9 2 2 2h18v-2H2V6zm5 9h14l-3.5-4.5-2.5 3.01L11.5 9zM22 4h-8l-2-2H6c-1.1 0-1.99.9-1.99 2L4 16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 12H6V4h5.17l1.41 1.41.59.59H22v10z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Media Viewer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="drawer__icon mdc-icon-button" aria-label="About" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">About</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="action__full drawer__icon mdc-icon-button" aria-label="Windowed Mode" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+                            </svg>
+                        </button>
+                        <p class="action__full-text drawer__title mdc-typography--caption">Windowed Mode</p>
+                    </div>
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="action__close drawer__icon mdc-icon-button" aria-label="Close" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Close</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
+    <footer class="main__footer">
+        <div class="pinned">
+            <button class="mdc-icon-button" title="Example" data-mdc-auto-init="MDCRipple">
+                <svg class="mdc-icon-button__icon" fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="none" d="M0 0h24v24H0V0z" />
+                    <path
+                        d="M6.21 13.97l1.2 2.07c.08.13.23.18.37.13l1.49-.6c.31.24.64.44 1.01.59l.22 1.59c.03.14.15.25.3.25h2.4c.15 0 .27-.11.3-.26l.22-1.59c.36-.15.7-.35 1.01-.59l1.49.6c.14.05.29 0 .37-.13l1.2-2.07c.08-.13.04-.29-.07-.39l-1.27-.99c.03-.19.04-.39.04-.58 0-.2-.02-.39-.04-.59l1.27-.99c.11-.09.15-.26.07-.39l-1.2-2.07c-.08-.13-.23-.18-.37-.13l-1.49.6c-.31-.24-.64-.44-1.01-.59l-.22-1.59c-.03-.14-.15-.25-.3-.25h-2.4c-.15 0-.27.11-.3.26l-.22 1.59c-.36.15-.71.34-1.01.58l-1.49-.6c-.14-.05-.29 0-.37.13l-1.2 2.07c-.08.13-.04.29.07.39l1.27.99c-.03.2-.05.39-.05.59 0 .2.02.39.04.59l-1.27.99c-.11.1-.14.26-.06.39zM12 10.29c.94 0 1.71.77 1.71 1.71s-.77 1.71-1.71 1.71-1.71-.77-1.71-1.71.77-1.71 1.71-1.71zM19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm0 16H5V5h14v14z" />
+                </svg>
+            </button>
+        </div>
+        <button class="footer__apps mdc-icon-button" title="Apps" data-mdc-auto-init="MDCRipple">
+            <svg class="mdc-icon-button__icon" fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" />
+            </svg>
+        </button>
+        <p class="footer__time mdc-typography--body1">0:00 am</p>
+    </footer>
+    <div role="progressbar" class="main__progress mdc-linear-progress mdc-linear-progress--indeterminate mdc-linear-progress--closed" data-mdc-auto-init="MDCLinearProgress">
+        <div class="mdc-linear-progress__buffering-dots"></div>
+        <div class="mdc-linear-progress__buffer"></div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+        </div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+        </div>
+    </div>
 </body>
 
 </html>

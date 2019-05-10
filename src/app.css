@@ -5,8 +5,49 @@
     --mdc-theme-on-secondary: #ffffff;
 }
 
-.main-content {
-    padding: 8px
+body {
+    background-image: url("assets/snowcap.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.main__content {
+    padding: 8px;
+}
+
+.main__footer {
+    height: 48px;
+    background-color: rgba(0, 0, 0, 0.75);
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.main__footer>* {
+    float: right;
+}
+
+.pinned {
+    float: left;
+}
+
+.drawer__title {
+    padding-left: 6px;
+}
+
+.footer__time {
+    font-size: 1.5rem;
+    margin-top: 12px;
+    color: white;
+}
+
+.drawer__app {
+    display: flex;
+    align-items: center;
 }
 
 .mdc-top-app-bar__row {
@@ -16,4 +57,9 @@
 
 .mdc-top-app-bar__action-item--unbounded {
     -webkit-app-region: no-drag;
+}
+
+.main__progress {
+    position: absolute;
+    bottom: 0;
 }
