@@ -215,8 +215,8 @@ window.onload = () => {
         <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
         </div>
         `)
-        const height = $(window).height() - 400
-        const width = $(window).width() - 200
+        const height = $(window).height() * 0.6
+        const width = $(window).width() * 0.6
         el.find(".app__header").css("width", width)
         el.append($("<iframe>").attr({
             src: conf.src,
