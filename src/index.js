@@ -27,7 +27,7 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 1280,
         height: 720,
-        // icon: path.join(__dirname, "icon.ico"),
+        icon: path.join(__dirname, "icon.ico"),
         webPreferences: {
             nodeIntegration: false,
             nodeIntegrationInWorker: false,
@@ -55,6 +55,10 @@ const createWindow = () => {
         mainWindow = null
     })
 }
+
+app.setAsDefaultProtocolClient("rammos")
+
+app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required")
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

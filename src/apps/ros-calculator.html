@@ -1,0 +1,428 @@
+<!-- This file is currently used for testing purposes. -->
+<!DOCTYPE html>
+<html lang="en" ng-app="CalcApp">
+
+<head>
+    <!-- Common declarations -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- SEO -->
+    <title>ROS Calculator</title>
+    <meta name="description" content="This is a Material Design calculator that runs in your browser.">
+    <meta name="keywords" content="Calculator, Material Calculator, Online Calculator, HTML, CSS, JS">
+    <meta name="author" content="Richie Bendall">
+
+    <!-- Set theme colour -->
+    <meta name="theme-color" content="#4285f4">
+
+    <!-- Set favicon -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- Define web app manifests -->
+    <link rel="manifest" href="site.webmanifest">
+
+    <!-- Import CSS Resources -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.18/angular-material.min.css">
+
+    <style>
+        html {
+            transition: zoom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            transition: zoom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #4285f4;
+            font-family: Roboto, sans-serif;
+        }
+
+        #main {
+            width: 400px;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .md-button {
+            transition: box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            background-color: #eeeeee;
+            color: #4285f4;
+        }
+
+        .controls .md-button {
+            flex: 0 0 66.6px;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .controls-symbol {
+            font-size: 25px !important;
+        }
+
+        .controls-svg {
+            margin-top: 13px;
+        }
+
+        .input {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            flex-direction: row;
+            align-items: center;
+            width: 300px;
+            background-color: #f5f5f5;
+            color: #212121;
+        }
+
+        .input .md-button {
+            flex: 0 0 33%;
+            height: 100px;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .disp {
+            padding: 20px 25px;
+            font-size: 36px;
+            height: 32px;
+            text-align: right;
+            color: #737373;
+            background-color: white;
+            border: 0;
+            width: 350px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result {
+            padding: 10px 25px;
+            font-size: 32px;
+            height: 40px;
+            text-align: right;
+            color: #8e8e8e;
+            top: 0;
+            position: relative;
+            background-color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .adv {
+            position: absolute;
+            width: 300px;
+            height: 400px;
+            right: -280px;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #4285f4;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .adv .md-button {
+            flex: 0 0 33%;
+            height: 100px;
+            margin: 0;
+            font-size: 20px;
+            text-transform: none;
+            font-weight: 400;
+            color: white;
+        }
+
+        .adv:hover {
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            right: 0;
+        }
+
+        md-divider {
+            border-top-color: #fafafa;
+        }
+
+        .circle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            right: 32px;
+            border-radius: 50%;
+            background-color: #4285f4;
+            -webkit-animation: ripple 1s;
+            animation: ripple 1s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity;
+            opacity: 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        @-webkit-keyframes ripple {
+            0% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            80% {
+                -webkit-transform: scale(18);
+                transform: scale(18);
+                opacity: 1;
+            }
+
+            100% {
+                -webkit-transform: scale(18);
+                transform: scale(18);
+                opacity: 0;
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            80% {
+                -webkit-transform: scale(18);
+                transform: scale(18);
+                opacity: 1;
+            }
+
+            100% {
+                -webkit-transform: scale(18);
+                transform: scale(18);
+                opacity: 0;
+            }
+        }
+
+        #carbonads {
+            background-color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+            font-family: Roboto, Helvetica, sans-serif;
+            line-height: 28px;
+            padding: 8px;
+            box-sizing: border-box;
+            transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media only screen and (max-width: 425px) {
+            #carbonads {
+                width: calc(100% - 16px);
+            }
+        }
+
+        #carbonads:hover {
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        #carbonads .carbon-wrap .carbon-img>img {
+            margin-right: 9px;
+            float: left;
+        }
+
+        @media only screen and (max-width: 400px) {
+            #carbonads .carbon-wrap .carbon-img>img {
+                width: auto;
+                max-width: 130px;
+                height: 50px;
+            }
+        }
+
+        #carbonads .carbon-wrap .carbon-text {
+            color: #637381;
+            font-weight: 300;
+            display: block;
+            font-size: 12px;
+            line-height: 15.96px;
+            margin-bottom: 0;
+            margin-top: 8px;
+            text-decoration: none;
+        }
+
+        #carbonads .carbon-poweredby {
+            color: #c5cdd0;
+            font-size: 8px;
+            font-weight: 500;
+            line-height: 10px;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+    </style>
+
+    <!-- Import Less Critical CSS Resources -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+</head>
+
+<body ng-cloak layout="column" layout-align="center center" ng-controller="calcCtrl">
+    <script async src="https://cdn.carbonads.com/carbon.js?serve=CK7I6K3E&amp;placement=wwwrichie-bendallml" id="_carbonads_js"></script>
+    <md-card id="main" class="md-whiteframe-z4">
+        <input class="disp" id="inp" ng-model="expr" type="text" ng-keyup="$scope.getRes();" aria-label="Equation">
+        <md-divider></md-divider>
+        <div class="result" aria-label="Answer">{{result}}</div>
+        <div ng-if="aclick" ng-init="aclick=false" class="circle">
+        </div>
+        <div class="panel">
+            <div class="input">
+                <md-button class="md-icon-button seven" ng-click="expr = expr + 7">7</md-button>
+                <md-button class="md-icon-button eight" ng-click="expr = expr + 8">8</md-button>
+                <md-button class="md-icon-button nine" ng-click="expr = expr + 9">9</md-button>
+                <md-button class="md-icon-button four" ng-click="expr = expr + 4">4</md-button>
+                <md-button class="md-icon-button five" ng-click="expr = expr + 5">5</md-button>
+                <md-button class="md-icon-button six" ng-click="expr = expr + 6">6</md-button>
+                <md-button class="md-icon-button one" ng-click="expr = expr + 1">1</md-button>
+                <md-button class="md-icon-button two" ng-click="expr = expr + 2">2</md-button>
+                <md-button class="md-icon-button three" ng-click="expr = expr + 3">3</md-button>
+                <md-button class="md-icon-button zero" ng-click="expr = expr + 0">0</md-button>
+                <md-button class="md-icon-button dot" ng-click="expr = expr + '.'" aria-label="Decimal point">.</md-button>
+                <md-button class="md-icon-button equal" ng-click="getRes()" aria-label="Equals">=</md-button>
+
+            </div>
+            <div class="controls">
+                <md-button ng-click="aclick=!aclick; ac();" aria-label="Clear answer">
+                    <svg class="controls-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4">
+                        <path fill="none" d="M0 0h24v24H0V0z" />
+                        <path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z" />
+                    </svg>
+                </md-button>
+                <md-button ng-click="clear()" aria-label="Clear last character">
+                    <svg class="controls-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4">
+                        <path fill="none" d="M0 0h24v24H0V0z" />
+                        <path
+                            d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z" />
+                    </svg>
+                </md-button>
+                <md-button class="controls-symbol" ng-click="expr = expr + ' ÷ '" aria-label="Divide">÷</md-button>
+                <md-button class="controls-symbol" ng-click="expr = expr + ' × '" aria-label="Multiply">×</md-button>
+                <md-button class="controls-symbol" ng-click="expr = expr + ' − '" aria-label="Subtract">−</md-button>
+                <md-button class="controls-symbol" ng-click="expr = expr + ' + '" aria-label="Add">+</md-button>
+            </div>
+            <div class="adv" md-whiteframe="z1">
+                <md-button class="md-icon-button " ng-click="expr = expr + 'sin('" aria-label="Sine">sin</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + 'cos('" aria-label="Cosine">cos</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + 'tan('" aria-label="Tangent">tan</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + 'log('" aria-label="Natural logarithm">ln</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + 'log10('">log</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + '!'" aria-label="Factorial">!</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + 'π'" aria-label="Pi">π</md-button>
+                <md-button class="md-icon-button " ng-click="expr = expr + 'e'">e</md-button>
+                <md-button class="md-icon-button three" ng-click="expr = expr + '^'" aria-label="Power">^</md-button>
+                <md-button class="md-icon-button dot" ng-click="expr = expr + '('" aria-label="Opening bracket">(</md-button>
+                <md-button class="md-icon-button zero" ng-click="expr = expr + ')'" aria-label="Closing bracket">)</md-button>
+                <md-button class="md-icon-button equal" ng-click="expr = expr + '√('" aria-label="Square root">√</md-button>
+            </div>
+        </div>
+    </md-card>
+
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular-aria.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.8/angular-material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.9.0/math.min.js"></script>
+
+    <script>
+        var app = angular.module("CalcApp", ["ngMaterial", "ngAnimate"]);
+
+        var parseExprRules = {
+            "×": "*",
+            "÷": "/",
+            "−": "-",
+            "π": "PI",
+            "√": "sqrt"
+        };
+
+        app.controller("calcCtrl", function($scope, $timeout, $rootScope) {
+            $scope.aclick = false;
+            $scope.expr = "";
+            $scope.result = "";
+
+            $scope.getRes = function() {
+                try {
+                    if ($scope.expr != "") {
+                        var calc = $scope.expr;
+                        $.each(Object.entries(parseExprRules), function(_key, val) {
+                            return calc = calc.replace(String2Regex("/" + val[0] + "/g"), val[1]);
+                        });
+                        $scope.result = math.round(math.eval(calc), 8);
+                    } else {
+                        $scope.result = "";
+                    }
+                } catch (e) {
+                    $scope.result = "Error";
+                }
+            };
+
+            $scope.ac = function() {
+                $timeout(function() {
+                    $scope.expr = "";
+                    $scope.result = "";
+                    $scope.aclick = false;
+                }, 500);
+            };
+
+            $scope.clear = function() {
+                if ($scope.expr.substr(-1) == " ") {
+                    $scope.expr = $scope.expr.slice(0, -2);
+                } else {
+                    $scope.expr = $scope.expr.slice(0, -1);
+                }
+            };
+
+            $("#inp").keypress(function(_ref) {
+                var keyCode = _ref.keyCode;
+
+                if (keyCode == 13) {
+                    $scope.getRes();
+                }
+            });
+        });
+
+        var handleResize = function handleResize() {
+            var excessHeight = $(window).innerHeight() / ($("#main").innerHeight() + 25);
+            var excessWidth = $(window).innerWidth() / ($("#main").innerWidth() + 25);
+
+            if (excessWidth >= 1 && excessHeight >= 1) {
+                $("html, body").css("zoom", 1);
+            } else {
+                if (excessWidth < excessHeight) $("html, body").css("zoom", excessWidth);
+                else $("html, body").css("zoom", excessHeight);
+            }
+        };
+
+        $(document).ready(function() {
+            return handleResize();
+        });
+
+        $(window).on("resize", function() {
+            return handleResize();
+        });
+
+        console.log("ROS Calculator is open source on GitHub for you to check out: https://github.com/Richienb/ros-calculator");
+
+        if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost" || window.location.hostname === "[::1]" || window.location.hostname.match(
+                /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/))) $(document).ready(navigator.serviceWorker.register("service-worker.js"));
+    </script>
+</body>
+
+</html>

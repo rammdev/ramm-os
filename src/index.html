@@ -15,11 +15,11 @@
 
 <body class="app mdc-typography">
     <header class="mdc-top-app-bar mdc-top-app-bar--short">
-        <div class="mdc-top-app-bar__row">
+        <div class="header__row mdc-top-app-bar__row">
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                 <span class="mdc-top-app-bar__title">RAMM OS</span> </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-                <button class="mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
+                <button class="header__item mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Close" data-mdc-auto-init="MDCRipple">
                     <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path fill="none" d="M0 0h24v24H0V0z" />
                         <path
@@ -35,7 +35,7 @@
             <div class="mdc-layout-grid">
                 <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell drawer__app">
-                        <button class="drawer__icon mdc-icon-button" aria-label="Install" data-mdc-auto-init="MDCRipple">
+                        <button class="install__start drawer__icon mdc-icon-button" aria-label="Install" data-mdc-auto-init="MDCRipple">
                             <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path fill="none" d="M0 0h24v24H0V0z" />
                                 <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
@@ -133,6 +133,42 @@
             </div>
         </div>
     </main>
+    <div class="install__dialog mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" data-mdc-auto-init="MDCDialog">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <h2 class="mdc-dialog__title" id="my-dialog-title">Install App</h2>
+                <div class="mdc-dialog__content" id="my-dialog-content">
+                    Welcome to the app installer.
+                    <br>
+                    <br>
+                    <div class="install__uri mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+                        <input type="text" id="tf-outlined" class="mdc-text-field__input">
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <label for="tf-outlined" class="mdc-floating-label">Installation URI</label>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                        <span class="mdc-button__label">Cancel</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="install">
+                        <span class="mdc-button__label">Install</span>
+                    </button>
+                </footer>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    <div class="main__snackbar mdc-snackbar mdc-snackbar--leading" data-mdc-auto-init="MDCSnackbar">
+        <div class="mdc-snackbar__surface">
+            <div class="mdc-snackbar__label" role="status" aria-live="polite"></div>
+        </div>
+    </div>
     <footer class="main__footer">
         <div class="pinned">
             <button class="mdc-icon-button" title="Example" data-mdc-auto-init="MDCRipple">

@@ -50,16 +50,24 @@ body {
     align-items: center;
 }
 
-.mdc-top-app-bar__row {
+.header__row {
     -webkit-app-region: drag;
     -webkit-user-select: none;
 }
 
-.mdc-top-app-bar__action-item--unbounded {
+.header__item {
     -webkit-app-region: no-drag;
 }
 
 .main__progress {
     position: absolute;
     bottom: 0;
+}
+
+.app__container {
+    position: absolute;
+}
+
+.app__drawer {
+    z-index: 6;
 }
