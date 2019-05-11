@@ -215,12 +215,14 @@ window.onload = () => {
         <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
         </div>
         `)
-        el.find(".app__header").css("width", $(window).width())
+        const height = $(window).height() - 400
+        const width = $(window).width() - 200
+        el.find(".app__header").css("width", width)
         el.append($("<iframe>").attr({
             src: conf.src,
             frameborder: 0,
-            height: $(window).height(),
-            width: $(window).width(),
+            height: height,
+            width: width,
         }))
         el.appendTo(".main__content").makeDraggable()
         el.find(".app__close").click(() => el.remove())
