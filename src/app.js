@@ -10,12 +10,12 @@ Vue.config.productionTip = false
 
 import path from "path"
 
-// Provide improved filesystem functions
-const fs = require("graceful-fs").gracefulify(require("fs"))
-
 import {
     Promise,
 } from "bluebird"
+
+// Provide improved filesystem functions
+const fs = require("graceful-fs").gracefulify(require("fs"))
 
 import dayjs from "dayjs"
 
@@ -30,6 +30,8 @@ const db = new Store({
     cwd: path.join("ramm-os", "settings"),
     encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
 })
+
+import isColour from 'is-color';
 
 const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36"
 
@@ -83,6 +85,7 @@ window.onload = () => {
             $(".action__full-text").html("Fullscreen Mode")
         }
     })
+    $(".action__devtools").click(() => mainWindow.toggleDevTools())
 
     const setTime = () => $(".footer__time").html(dayjs().format("h:mm a"))
 
@@ -116,11 +119,28 @@ window.onload = () => {
         }
     }
 
-    const installApp = conf => {
+    const loadApp = conf => {
+        const el = $(".drawer__user").append(`
+            <div class="mdc-layout-grid__cell drawer__app">
+                <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
+                    <img src="${path.resolve(conf.source, conf.icon)}" alt="${conf.name} icon" height="24" width="24">
+                </button>
+                <p class="drawer__title mdc-typography--caption">${conf.name}</p>
+            </div>
+        `)
+        el.find(".drawer__icon").click(() => launchApp(conf))
+        mdc.autoInit($(".drawer__user").children().last().get(0))
+        $(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
+            MDCRipple,
+        }) => MDCRipple.unbounded = true)
+    }
+
+    const installApp = (conf, notify = true) => {
         if (conf.type !== "ramm-app") return
         if (conf.spec !== 0) return
         appsdb.set(conf.id, conf)
-        snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+        loadApp(conf)
+        if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
     }
 
     $(".install__start").click(() => $(".install__dialog").get(0).MDCDialog.open())
@@ -135,19 +155,19 @@ window.onload = () => {
             const protocol = uri.split(":")[0]
             if (protocol in ["http", "https"]) {
                 requestjson(uri, (err, _res, body) => {
-                    if (err) return
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(body)
                 })
             } else if (protocol === "json") {
                 installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
             } else if (protocol === "file") {
-                fs.readFile(decodeURI(uri).replace("file:///", ""), (err, data) => {
-                    if (err) return;
+                fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8", (err, data) => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(JSON.parse(data))
-                });
+                })
             } else {
-                fs.readFile(path.resolve(uri), (err, data) => {
-                    if (err) return;
+                fs.readFile(path.resolve(uri), "utf8", (err, data) => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(JSON.parse(data))
                 });
             }
@@ -195,7 +215,7 @@ window.onload = () => {
         }
     }
 
-    const loadApp = (conf) => {
+    const launchApp = conf => {
         const el = $(`
         <div class="app__container mdc-elevation--z8">
         <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
@@ -219,12 +239,36 @@ window.onload = () => {
         const width = $(window).width() * 0.6
         el.find(".app__header").css("width", width)
         el.append($("<iframe>").attr({
-            src: conf.src,
+            src: path.resolve(conf.source, conf.start),
             frameborder: 0,
             height: height,
-            width: width,
+            width: width
+        }).css({
+            resize: "both"
         }))
+        new ResizeObserver(entries => {
+            entries.forEach(({contentRect}) => {
+                el.find(".app__header").css("width", contentRect.width)
+            })
+        }).observe(el.find("iframe").get(0));
+        // const themeMatch = (/<meta name="theme-color" content="(.+)">/).exec(el.find("iframe").contents().find("html"))
+        // console.log(el.find("iframe").contents().find("body"))
+        // const themeColour = themeMatch ? themeMatch[0] : undefined
+        // if (isColour(themeColour)) el.find(".app__header").css("background-color", themeColour)
+        if (isColour(conf.themecolour)) el.find(".app__header").css("background-color", conf.themecolour)
+
         el.appendTo(".main__content").makeDraggable()
+        // el.append(`<div class="shadow">`)
+        // console.log(el.find(".shadow").get(0))
+        // let shadow = el.find(".shadow").get(0).attachShadow({
+        //     mode: 'open'
+        // });
+        // fs.readFile(path.join(conf.source, conf.start), "utf8", (err, data) => {
+        //     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+        //     console.log(data)
+        //     // shadow.innerHTML = data
+        //     el.find("iframe").contents().find(":root").html(data)
+        // })
         el.find(".app__close").click(() => el.remove())
         mdc.autoInit(el.get(0))
         el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
@@ -232,8 +276,14 @@ window.onload = () => {
         }) => MDCRipple.unbounded = true)
     }
 
-    loadApp({
+    installApp({
+        type: "ramm-app",
+        spec: 0,
+        id: "ros-calculator",
         name: "ROS Calculator",
-        src: "./apps/ros-calculator.html",
-    })
+        source: "src/apps/ros-calculator",
+        icon: "resources/icon-48x48.png",
+        start: "index.html",
+        themecolour: "#4285f4"
+    }, false)
 }

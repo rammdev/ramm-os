@@ -32,6 +32,8 @@
     <div class="mdc-top-app-bar--short-fixed-adjust"></div>
     <main class="main__content">
         <div class="app__drawer mdc-menu mdc-menu-surface" data-mdc-auto-init="MDCMenu">
+            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+            </ul>
             <div class="mdc-layout-grid">
                 <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell drawer__app">
@@ -98,10 +100,6 @@
                         </button>
                         <p class="drawer__title mdc-typography--caption">Media Viewer</p>
                     </div>
-                </div>
-            </div>
-            <div class="mdc-layout-grid">
-                <div class="mdc-layout-grid__inner">
                     <div class="mdc-layout-grid__cell drawer__app">
                         <button class="drawer__icon mdc-icon-button" aria-label="About" data-mdc-auto-init="MDCRipple">
                             <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -110,6 +108,20 @@
                             </svg>
                         </button>
                         <p class="drawer__title mdc-typography--caption">About</p>
+                    </div>
+                    <div class="drawer__user"></div>
+                </div>
+            </div>
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell drawer__app">
+                        <button class="action__devtools drawer__icon mdc-icon-button" aria-label="Developer Tools" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+                            </svg>
+                        </button>
+                        <p class="drawer__title mdc-typography--caption">Developer Tools</p>
                     </div>
                     <div class="mdc-layout-grid__cell drawer__app">
                         <button class="action__full drawer__icon mdc-icon-button" aria-label="Windowed Mode" data-mdc-auto-init="MDCRipple">

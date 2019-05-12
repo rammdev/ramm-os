@@ -5,6 +5,10 @@
     --mdc-theme-on-secondary: #ffffff;
 }
 
+html {
+    overflow: hidden;
+}
+
 body {
     background-image: url("assets/snowcap.png");
     background-position: center center;
@@ -70,4 +74,12 @@ body {
 
 .app__drawer {
     z-index: 6;
+}
+
+.drawer__user {
+    display: contents;
+}
+
+.app__header {
+    z-index: 0;
 }
