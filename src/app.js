@@ -1,4 +1,8 @@
-const electron = require("electron")
+// setImmediate Polyfill
+const _setImmediate = setImmediate
+process.once("loaded", () => global.setImmediate = _setImmediate)
+
+import electron from "electron"
 
 require("electron-compile/lib/initialize-renderer").initializeRendererProcess(electron.remote.getGlobal("globalCompilerHost").readOnlyMode)
 
@@ -10,6 +14,26 @@ Vue.config.productionTip = false
 
 import path from "path"
 
+import JSZip from "jszip"
+
+const extract = Promise.promisify(require('extract-zip'));
+
+import scrape from 'website-scraper';
+
+import isUrl from "is-url"
+
+import http from "http"
+
+const dirs = {
+    temp: path.join(require("temp-dir"), "ramm-os"), // Temporary directory
+    store: path.join((electron.app || electron.remote.app).getPath("appData"), "ramm-os"), // Storage directory
+}
+
+Array.prototype.i = function(val) {
+    if (val < 0) return this[this.length - Math.abs(val)]
+    return this[val]
+}
+
 import {
     Promise,
 } from "bluebird"
@@ -18,6 +42,8 @@ import {
 const fs = require("graceful-fs").gracefulify(require("fs"))
 
 import dayjs from "dayjs"
+
+import url from "url"
 
 import Store from "electron-store"
 
@@ -31,7 +57,7 @@ const db = new Store({
     encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
 })
 
-import isColour from 'is-color';
+import isColour from "is-color"
 
 const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36"
 
@@ -43,6 +69,8 @@ const request = require("request").defaults({
     },
 })
 
+const urlExists = url => new Promise((resolve, reject) => request.head(url).on('response', res => resolve(res.statusCode.toString()[0] === "2")))
+
 const requestjson = request.defaults({
     json: true,
 })
@@ -53,6 +81,21 @@ const githubapi = request.defaults({
         "Accept": "application/vnd.github.v3+json",
     },
 })
+
+const populateDirectory = dir => new Promise((resolve, reject) =>
+    fs.access(dir, fs.constants.F_OK, (err) => {
+        if (err) {
+            fs.mkdir(dir, {
+                recursive: true,
+            }, (err) => {
+                if (err) reject(err)
+                resolve(true)
+            })
+        } else resolve(false)
+    })
+)
+populateDirectory(dirs.temp)
+populateDirectory(dirs.store)
 
 import * as mdc from "material-components-web"
 
@@ -67,7 +110,7 @@ window.onload = () => {
     mdc.autoInit()
 
     // Fix the ripples of each icon button
-    $(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
+    $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
         MDCRipple,
     }) => MDCRipple.unbounded = true)
 
@@ -123,7 +166,7 @@ window.onload = () => {
         const el = $(".drawer__user").append(`
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
-                    <img src="${path.resolve(conf.source, conf.icon)}" alt="${conf.name} icon" height="24" width="24">
+                    <img src="${conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="${conf.name} icon" height="24" width="24">
                 </button>
                 <p class="drawer__title mdc-typography--caption">${conf.name}</p>
             </div>
@@ -136,31 +179,84 @@ window.onload = () => {
     }
 
     const installApp = (conf, notify = true) => {
-        if (conf.type !== "ramm-app") return
-        if (conf.spec !== 0) return
-        appsdb.set(conf.id, conf)
-        loadApp(conf)
-        if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+        if (isUrl(conf)) {
+            urlExists(url.resolve(conf, "ramm.app.json")).then(exists => {
+                if (exists) requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    installApp(body)
+                })
+                else request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
+                    fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, err => {
+                        if (err) {
+                            scrape({
+                                urls: [conf],
+                                directory: path.join(dirs.store, "appdata", body),
+                            }).then(_res => {
+                                const c = {
+                                    id: body,
+                                    name: body,
+                                    start: "index.html",
+                                }
+                                appsdb.set(conf.id, c)
+                                loadApp(c)
+                                if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                            });
+                        } else {
+                            loadApp({
+                                id: body,
+                                name: body,
+                                start: "index.html",
+                            })
+                            if (notify) snackBarMessage("App already installed!")
+                        }
+                    })
+                })
+            })
+        } else {
+            if (conf.type !== "ramm-app") return
+            if (conf.spec !== 0) return
+            if (appsdb.has(conf.id)) {
+                if (notify) snackBarMessage("App already installed!")
+                loadApp(conf)
+                return
+            }
+            const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
+            request(conf.source, (err, _res, body) => {
+                if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                extract(path.join(dirs.temp, filename), {
+                    dir: path.join(dirs.store, "appdata", conf.id)
+                }).then(err => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                })
+                appsdb.set(conf.id, conf)
+                loadApp(conf)
+                if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+            }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
+        }
     }
 
     $(".install__start").click(() => $(".install__dialog").get(0).MDCDialog.open())
 
     $(".install__dialog").get(0).MDCDialog.listen("MDCDialog:closing", ({
-        detail
+        detail,
     }) => {
         // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
         if (detail.action === "install") {
             if ($(".install__uri").get(0).MDCTextField.value === "") return
             const uri = $(".install__uri").get(0).MDCTextField.value
-            const protocol = uri.split(":")[0]
-            if (protocol in ["http", "https"]) {
+            if (isUrl(uri)) {
+                installApp(uri)
+                return
+            }
+            const protocol = new URL(uri).protocol
+            if (protocol in ["http:", "https:"]) {
                 requestjson(uri, (err, _res, body) => {
                     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(body)
                 })
-            } else if (protocol === "json") {
+            } else if (protocol === "json:") {
                 installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
-            } else if (protocol === "file") {
+            } else if (protocol === "file:") {
                 fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8", (err, data) => {
                     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(JSON.parse(data))
@@ -169,7 +265,7 @@ window.onload = () => {
                 fs.readFile(path.resolve(uri), "utf8", (err, data) => {
                     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(JSON.parse(data))
-                });
+                })
             }
             $(".install__uri").get(0).MDCTextField.value = ""
         }
@@ -215,13 +311,19 @@ window.onload = () => {
         }
     }
 
-    const launchApp = conf => {
+    const launchApp = ({
+        name,
+        id,
+        root,
+        start,
+        themecolour,
+    }) => {
         const el = $(`
         <div class="app__container mdc-elevation--z8">
         <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
             <div class="mdc-top-app-bar__row">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <span class="mdc-top-app-bar__title">${conf.name}</span> </section>
+                    <span class="mdc-top-app-bar__title">${name}</span> </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
                         <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -239,51 +341,50 @@ window.onload = () => {
         const width = $(window).width() * 0.6
         el.find(".app__header").css("width", width)
         el.append($("<iframe>").attr({
-            src: path.resolve(conf.source, conf.start),
+            src: path.resolve(dirs.store, "appdata", id, root || "", start),
             frameborder: 0,
-            height: height,
-            width: width
+            height,
+            width,
         }).css({
-            resize: "both"
+            resize: "both",
         }))
-        new ResizeObserver(entries => {
-            entries.forEach(({contentRect}) => {
+        new ResizeObserver((entries) => {
+            entries.forEach(({
+                contentRect,
+            }) => {
                 el.find(".app__header").css("width", contentRect.width)
             })
-        }).observe(el.find("iframe").get(0));
-        // const themeMatch = (/<meta name="theme-color" content="(.+)">/).exec(el.find("iframe").contents().find("html"))
-        // console.log(el.find("iframe").contents().find("body"))
-        // const themeColour = themeMatch ? themeMatch[0] : undefined
-        // if (isColour(themeColour)) el.find(".app__header").css("background-color", themeColour)
-        if (isColour(conf.themecolour)) el.find(".app__header").css("background-color", conf.themecolour)
+        }).observe(el.find("iframe").get(0))
+
+        if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
 
         el.appendTo(".main__content").makeDraggable()
-        // el.append(`<div class="shadow">`)
-        // console.log(el.find(".shadow").get(0))
-        // let shadow = el.find(".shadow").get(0).attachShadow({
-        //     mode: 'open'
-        // });
-        // fs.readFile(path.join(conf.source, conf.start), "utf8", (err, data) => {
-        //     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-        //     console.log(data)
-        //     // shadow.innerHTML = data
-        //     el.find("iframe").contents().find(":root").html(data)
-        // })
         el.find(".app__close").click(() => el.remove())
+
         mdc.autoInit(el.get(0))
-        el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
+        el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
             MDCRipple,
         }) => MDCRipple.unbounded = true)
     }
+
+    $(".app__menu").get(0).MDCMenu.hoistMenuToBody()
+
+    $(".main__content").on("contextmenu", (e) => {
+        e.preventDefault()
+        $(".app__menu").get(0).MDCMenu.setAbsolutePosition(e.clientX, e.clientY)
+        $(".app__menu").get(0).MDCMenu.open = !$(".app__menu").get(0).MDCMenu.open
+        return false
+    })
 
     installApp({
         type: "ramm-app",
         spec: 0,
         id: "ros-calculator",
         name: "ROS Calculator",
-        source: "src/apps/ros-calculator",
+        source: "https://github.com/Richienb/ros-calculator/archive/master.zip",
+        root: "ros-calculator-master",
         icon: "resources/icon-48x48.png",
         start: "index.html",
-        themecolour: "#4285f4"
+        themecolour: "#4285f4",
     }, false)
 }

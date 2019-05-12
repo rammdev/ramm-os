@@ -3,5 +3,5 @@ module.exports = {
     "globPatterns": [
         "**/*.*",
     ],
-    "swDest": "service-worker.js"
-};
+    "swDest": "service-worker.js",
+}

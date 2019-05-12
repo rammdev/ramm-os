@@ -25,7 +25,7 @@ body {
     height: 48px;
     background-color: rgba(0, 0, 0, 0.75);
     bottom: 0;
-    position: absolute;
+    position: fixed;
     width: 100%;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -33,6 +33,10 @@ body {
 
 .main__footer>* {
     float: right;
+}
+
+.mdc-top-app-bar__title {
+    user-select: none;
 }
 
 .pinned {
@@ -82,4 +86,59 @@ body {
 
 .app__header {
     z-index: 0;
+    position: absolute;
+    top: 0;
+}
+
+.app {
+    height: 100vh;
+}
+
+.main__content {
+    height: 100%;
+}
+
+iframe {
+    background-color: white;
+}
+
+::-webkit-scrollbar {
+    border-radius: 100px;
+    background-color: transparent;
+    width: 8px;
+    height: 8px;
+    overflow: visible;
+}
+
+::-webkit-scrollbar-button {
+    height: 0;
+    width: 0;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 100px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: solid transparent;
+    border-width: 1px 1px 1px 6px;
+    min-height: 28px;
+    padding: 100px 0 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-track {
+    background-clip: padding-box;
+    border: solid transparent;
+    border-width: 0 0 0 4px;
 }
