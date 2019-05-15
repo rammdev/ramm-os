@@ -23,9 +23,10 @@ You can customise these options by creating a `ramm.app.json` in the root of you
 ```
 
 ### Please note
-- The icon will be scaled down to 24x24px.
-- The icon must be in a format supported by a modern version of chrome.
-- The theme colour can be represented in any css-compatible format.
+
+-   The icon will be scaled down to 24x24px.
+-   The icon must be in a format supported by a modern version of chrome.
+-   The theme colour can be represented in any css-compatible format.
 
 ## Initial sketch
 
