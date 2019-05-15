@@ -4,25 +4,19 @@ process.once("loaded", () => global.setImmediate = _setImmediate)
 
 import electron from "electron"
 
-require("electron-compile/lib/initialize-renderer").initializeRendererProcess(electron.remote.getGlobal("globalCompilerHost").readOnlyMode)
-
 const mainWindow = electron.remote.getCurrentWindow()
 const eapp = electron.remote.app
 
-import Vue from "vue/dist/vue.min.js"
-Vue.config.productionTip = false
+// import Vue from "vue/dist/vue.min.js"
+// Vue.config.productionTip = false
 
 import path from "path"
 
-import JSZip from "jszip"
+const extract = Promise.promisify(require("extract-zip"))
 
-const extract = Promise.promisify(require('extract-zip'));
-
-import scrape from 'website-scraper';
+import scrape from "website-scraper"
 
 import isUrl from "is-url"
-
-import http from "http"
 
 const dirs = {
     temp: path.join(require("temp-dir"), "ramm-os"), // Temporary directory
@@ -69,7 +63,7 @@ const request = require("request").defaults({
     },
 })
 
-const urlExists = url => new Promise((resolve, reject) => request.head(url).on('response', res => resolve(res.statusCode.toString()[0] === "2")))
+const urlExists = (url) => new Promise((resolve, reject) => request.head(url).on("response", (res) => resolve(res.statusCode.toString()[0] === "2")).on("error", (err) => reject(err)))
 
 const requestjson = request.defaults({
     json: true,
@@ -82,7 +76,7 @@ const githubapi = request.defaults({
     },
 })
 
-const populateDirectory = dir => new Promise((resolve, reject) =>
+const populateDirectory = (dir) => new Promise((resolve, reject) =>
     fs.access(dir, fs.constants.F_OK, (err) => {
         if (err) {
             fs.mkdir(dir, {
@@ -103,9 +97,9 @@ window.onload = () => {
     window.$ = require("jquery")
 
     // Define Vue app
-    const app = new Vue({
-        el: ".app",
-    })
+    // const app = new Vue({
+    //     el: ".app",
+    // })
 
     mdc.autoInit()
 
@@ -162,7 +156,7 @@ window.onload = () => {
         }
     }
 
-    const loadApp = conf => {
+    const loadApp = (conf) => {
         const el = $(".drawer__user").append(`
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
@@ -173,25 +167,26 @@ window.onload = () => {
         `)
         el.find(".drawer__icon").click(() => launchApp(conf))
         mdc.autoInit($(".drawer__user").children().last().get(0))
-        $(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
+        $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
             MDCRipple,
         }) => MDCRipple.unbounded = true)
     }
 
     const installApp = (conf, notify = true) => {
         if (isUrl(conf)) {
-            urlExists(url.resolve(conf, "ramm.app.json")).then(exists => {
-                if (exists) requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
+            urlExists(url.resolve(conf, "ramm.app.json")).then((exists) => {
+                if (exists) {requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
                     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     installApp(body)
-                })
-                else request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
-                    fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, err => {
+                })}
+                else {request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, (err) => {
                         if (err) {
                             scrape({
                                 urls: [conf],
                                 directory: path.join(dirs.store, "appdata", body),
-                            }).then(_res => {
+                            }).then((_res) => {
                                 const c = {
                                     id: body,
                                     name: body,
@@ -200,7 +195,7 @@ window.onload = () => {
                                 appsdb.set(conf.id, c)
                                 loadApp(c)
                                 if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
-                            });
+                            })
                         } else {
                             loadApp({
                                 id: body,
@@ -210,7 +205,7 @@ window.onload = () => {
                             if (notify) snackBarMessage("App already installed!")
                         }
                     })
-                })
+                })}
             })
         } else {
             if (conf.type !== "ramm-app") return
@@ -221,11 +216,11 @@ window.onload = () => {
                 return
             }
             const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
-            request(conf.source, (err, _res, body) => {
+            request(conf.source, (err, _res, _body) => {
                 if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                 extract(path.join(dirs.temp, filename), {
-                    dir: path.join(dirs.store, "appdata", conf.id)
-                }).then(err => {
+                    dir: path.join(dirs.store, "appdata", conf.id),
+                }).then((err) => {
                     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                 })
                 appsdb.set(conf.id, conf)
