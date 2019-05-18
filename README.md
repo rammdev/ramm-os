@@ -18,7 +18,7 @@ You can customise these options by creating a `ramm.app.json` in the root of you
     "root": "richienb.github.io-master",
     "icon": "resources/icon-48x48.png",
     "start": "index.html",
-    "themecolour": "#3f51b5",
+    "themecolour": "#3f51b5"
 }
 ```
 
