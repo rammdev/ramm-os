@@ -93,6 +93,81 @@ populateDirectory(dirs.store)
 
 import * as mdc from "material-components-web"
 
+class AppWindow extends HTMLElement {
+    constructor() {
+        super();
+        const el = $(this.attachShadow({
+            mode: 'open'
+        }))
+        window.t = this
+        const content = $(this).html()
+        console.log($(this).attr())
+        el.empty().append(`
+            <link rel="stylesheet" href="..\\node_modules\\material-components-web\\dist\\material-components-web.min.css">
+            <style>
+                .app__container {
+                    position: absolute;
+                }
+
+                .app__drawer {
+                    z-index: 6;
+                }
+
+                .app__header {
+                    z-index: 0;
+                    position: absolute;
+                    top: 0;
+                }
+            </style>
+            <div class="app__container mdc-elevation--z8">
+            <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
+                <div class="mdc-top-app-bar__row">
+                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                        <span class="mdc-top-app-bar__title">${$(this).attr("data-name") || "App"}</span> </section>
+                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                        <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z"/>
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                            </svg>
+                        </button>
+                    </section>
+                </div>
+            </header>
+            <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
+            <div class="app__content">${content}</div>
+            </div>
+            <script src="..\\node_modules\\material-components-web\\dist\\material-components-web.min.js"></script>
+        `)
+        if (isColour($(this).attr("data-theme"))) el.find(".app__header").css("background-color", $(this).attr("data-theme"))
+        el.makeDraggable()
+        const height = $(window).height() * 0.6
+        const width = $(window).width() * 0.6
+        el.find(".app__header, .app__container").css("width", width)
+        // el.append($("<iframe>").attr({
+        //     src: path.resolve(dirs.store, "appdata", id, root || "", start),
+        //     frameborder: 0,
+        //     height,
+        //     width,
+        // }).css({
+        //     resize: "both",
+        // }))
+        $(".app__content").css({
+            "height": height,
+            "resize": "both"
+        })
+        new ResizeObserver((entries) => {
+            entries.forEach(({
+                contentRect,
+            }) => {
+                el.find(".app__header").css("width", contentRect.width)
+            })
+        }).observe(el.find(".app__content").get(0))
+    }
+}
+
+customElements.define('app-window', AppWindow);
+
 window.onload = () => {
     window.$ = require("jquery")
 
@@ -175,37 +250,40 @@ window.onload = () => {
     const installApp = (conf, notify = true) => {
         if (isUrl(conf)) {
             urlExists(url.resolve(conf, "ramm.app.json")).then((exists) => {
-                if (exists) {requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                    installApp(body)
-                })}
-                else {request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                    fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, (err) => {
-                        if (err) {
-                            scrape({
-                                urls: [conf],
-                                directory: path.join(dirs.store, "appdata", body),
-                            }).then((_res) => {
-                                const c = {
+                if (exists) {
+                    requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
+                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        installApp(body)
+                    })
+                } else {
+                    request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
+                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, (err) => {
+                            if (err) {
+                                scrape({
+                                    urls: [conf],
+                                    directory: path.join(dirs.store, "appdata", body),
+                                }).then((_res) => {
+                                    const c = {
+                                        id: body,
+                                        name: body,
+                                        start: "index.html",
+                                    }
+                                    appsdb.set(conf.id, c)
+                                    loadApp(c)
+                                    if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                                })
+                            } else {
+                                loadApp({
                                     id: body,
                                     name: body,
                                     start: "index.html",
-                                }
-                                appsdb.set(conf.id, c)
-                                loadApp(c)
-                                if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
-                            })
-                        } else {
-                            loadApp({
-                                id: body,
-                                name: body,
-                                start: "index.html",
-                            })
-                            if (notify) snackBarMessage("App already installed!")
-                        }
+                                })
+                                if (notify) snackBarMessage("App already installed!")
+                            }
+                        })
                     })
-                })}
+                }
             })
         } else {
             if (conf.type !== "ramm-app") return
@@ -313,25 +391,29 @@ window.onload = () => {
         start,
         themecolour,
     }) => {
-        const el = $(`
-        <div class="app__container mdc-elevation--z8">
-        <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
-            <div class="mdc-top-app-bar__row">
-                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <span class="mdc-top-app-bar__title">${name}</span> </section>
-                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-                    <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
-                        <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="none" d="M0 0h24v24H0V0z"/>
-                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-                        </svg>
-                    </button>
-                </section>
-            </div>
-        </header>
-        <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
-        </div>
-        `)
+        // const el = $(`
+        // <div class="app__container mdc-elevation--z8">
+        // <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
+        //     <div class="mdc-top-app-bar__row">
+        //         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+        //             <span class="mdc-top-app-bar__title">${name}</span> </section>
+        //         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+        //             <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
+        //                 <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        //                     <path fill="none" d="M0 0h24v24H0V0z"/>
+        //                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+        //                 </svg>
+        //             </button>
+        //         </section>
+        //     </div>
+        // </header>
+        // <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
+        // </div>
+        // `)
+        const el = $("<app-window>").attr({
+            "data-name": name,
+            "data-theme": themecolour
+        })
         const height = $(window).height() * 0.6
         const width = $(window).width() * 0.6
         el.find(".app__header").css("width", width)
@@ -351,7 +433,7 @@ window.onload = () => {
             })
         }).observe(el.find("iframe").get(0))
 
-        if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
+        if (isColour(themecolour)) el.find(".app__header").css("background-color", )
 
         el.appendTo(".main__content").makeDraggable()
         el.find(".app__close").click(() => el.remove())
