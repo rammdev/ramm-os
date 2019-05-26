@@ -95,18 +95,22 @@ import * as mdc from "material-components-web"
 
 class AppWindow extends HTMLElement {
     constructor() {
-        super();
-        const el = $(this.attachShadow({
-            mode: 'open'
-        }))
-        window.t = this
-        const content = $(this).html()
-        console.log($(this).attr())
-        el.empty().append(`
+        super()
+
+        const eln = this.attachShadow({
+            mode: "open",
+        })
+
+        const el = $(eln)
+        const host = $(eln.host)
+
+        el.prepend(`
             <link rel="stylesheet" href="..\\node_modules\\material-components-web\\dist\\material-components-web.min.css">
             <style>
                 .app__container {
                     position: absolute;
+                    background-color: white;
+                    resize: both;
                 }
 
                 .app__drawer {
@@ -118,12 +122,51 @@ class AppWindow extends HTMLElement {
                     position: absolute;
                     top: 0;
                 }
+
+                .resizable {
+                    resize: both;
+                }
+
+                ::-webkit-scrollbar {
+                  border-radius: 100px;
+                  background-color: transparent;
+                  width: 8px;
+                  height: 8px;
+                }
+
+                ::-webkit-scrollbar-button {
+                  height: 0;
+                  width: 0;
+                }
+
+                ::-webkit-scrollbar-corner {
+                  background-color: transparent;
+                }
+
+                ::-webkit-scrollbar-thumb {
+                  border-radius: 100px;
+                  background-color: rgba(0, 0, 0, 0.2);
+                  min-height: 28px;
+                }
+
+                ::-webkit-scrollbar-thumb:hover {
+                  background-color: rgba(0, 0, 0, 0.4);
+                }
+
+                ::-webkit-scrollbar-thumb:active {
+                  background-color: rgba(0, 0, 0, 0.5);
+                }
+
+                ::-webkit-scrollbar-track {
+                  background-clip: padding-box;
+                  border-width: 0 0 0 4px;
+                }
             </style>
             <div class="app__container mdc-elevation--z8">
             <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
                 <div class="mdc-top-app-bar__row">
                     <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                        <span class="mdc-top-app-bar__title">${$(this).attr("data-name") || "App"}</span> </section>
+                        <span class="mdc-top-app-bar__title">App</span> </section>
                     <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                         <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
                             <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -135,38 +178,48 @@ class AppWindow extends HTMLElement {
                 </div>
             </header>
             <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
-            <div class="app__content">${content}</div>
+            <div class="app__content"></div>
             </div>
             <script src="..\\node_modules\\material-components-web\\dist\\material-components-web.min.js"></script>
         `)
-        if (isColour($(this).attr("data-theme"))) el.find(".app__header").css("background-color", $(this).attr("data-theme"))
-        el.makeDraggable()
-        const height = $(window).height() * 0.6
-        const width = $(window).width() * 0.6
-        el.find(".app__header, .app__container").css("width", width)
-        // el.append($("<iframe>").attr({
-        //     src: path.resolve(dirs.store, "appdata", id, root || "", start),
-        //     frameborder: 0,
-        //     height,
-        //     width,
-        // }).css({
-        //     resize: "both",
-        // }))
-        $(".app__content").css({
-            "height": height,
-            "resize": "both"
+
+        $(this).ready(() => {
+            $(eln.host.innerHTML).appendTo(el.find(".app__content"))
+            host.empty()
+
+            el.makeDraggable()
+
+            el.find(".app__content .resizable").get(0)
+            el.find(".mdc-top-app-bar__title").text(host.attr("data-name"))
+
+            const themecolour = host.attr("data-theme")
+            if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
+
+            new ResizeObserver((entries) => {
+                entries.forEach(({
+                    contentRect,
+                }) => {
+                    el.find(".app__header, .app__container").css("width", contentRect.width)
+                    el.find(".app__content").css("height", contentRect.height)
+                })
+            }).observe(el.find(".app__content .resizable").get(0))
+
+            mdc.autoInit(el.get(0))
+            el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
+                MDCRipple,
+            }) => MDCRipple.unbounded = true)
+
+            el.find(".app__close").click(() => host.remove())
+
+            const height = $(window).height() * 0.5
+            const width = $(window).width() * 0.6
+            el.find(".app__header, .app__container, .resizable").css("width", width)
+            el.find(".app__content, .resizable").css("height", height)
         })
-        new ResizeObserver((entries) => {
-            entries.forEach(({
-                contentRect,
-            }) => {
-                el.find(".app__header").css("width", contentRect.width)
-            })
-        }).observe(el.find(".app__content").get(0))
     }
 }
 
-customElements.define('app-window', AppWindow);
+customElements.define("app-window", AppWindow)
 
 window.onload = () => {
     window.$ = require("jquery")
@@ -247,7 +300,10 @@ window.onload = () => {
         }) => MDCRipple.unbounded = true)
     }
 
-    const installApp = (conf, notify = true) => {
+    const installApp = (conf, {
+        alert = true,
+        internal = false,
+    } = {}) => {
         if (isUrl(conf)) {
             urlExists(url.resolve(conf, "ramm.app.json")).then((exists) => {
                 if (exists) {
@@ -271,7 +327,7 @@ window.onload = () => {
                                     }
                                     appsdb.set(conf.id, c)
                                     loadApp(c)
-                                    if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                                    if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
                                 })
                             } else {
                                 loadApp({
@@ -279,7 +335,7 @@ window.onload = () => {
                                     name: body,
                                     start: "index.html",
                                 })
-                                if (notify) snackBarMessage("App already installed!")
+                                if (alert) snackBarMessage("App already installed!")
                             }
                         })
                     })
@@ -289,22 +345,27 @@ window.onload = () => {
             if (conf.type !== "ramm-app") return
             if (conf.spec !== 0) return
             if (appsdb.has(conf.id)) {
-                if (notify) snackBarMessage("App already installed!")
+                if (alert) snackBarMessage("App already installed!")
                 loadApp(conf)
                 return
             }
-            const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
-            request(conf.source, (err, _res, _body) => {
-                if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                extract(path.join(dirs.temp, filename), {
-                    dir: path.join(dirs.store, "appdata", conf.id),
-                }).then((err) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                })
+            if (internal) {
                 appsdb.set(conf.id, conf)
                 loadApp(conf)
-                if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
-            }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
+            } else {
+                const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
+                request(conf.source, (err, _res, _body) => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    extract(path.join(dirs.temp, filename), {
+                        dir: path.join(dirs.store, "appdata", conf.id),
+                    }).then((err) => {
+                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    })
+                    appsdb.set(conf.id, conf)
+                    loadApp(conf)
+                    if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
+            }
         }
     }
 
@@ -372,9 +433,11 @@ window.onload = () => {
             pos2 = pos4 - e.clientY
             pos3 = e.clientX
             pos4 = e.clientY
-            this.css({
-                top: `${this.offset().top - pos2}px`,
-                left: `${this.offset().left - pos1}px`,
+            const el = $(this.get(0).host || this)
+            const vals = el.offset()
+            el.css({
+                top: `${vals.top - pos2}px`,
+                left: `${vals.left - pos1}px`,
             })
         }
 
@@ -391,57 +454,16 @@ window.onload = () => {
         start,
         themecolour,
     }) => {
-        // const el = $(`
-        // <div class="app__container mdc-elevation--z8">
-        // <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
-        //     <div class="mdc-top-app-bar__row">
-        //         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-        //             <span class="mdc-top-app-bar__title">${name}</span> </section>
-        //         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-        //             <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
-        //                 <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        //                     <path fill="none" d="M0 0h24v24H0V0z"/>
-        //                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-        //                 </svg>
-        //             </button>
-        //         </section>
-        //     </div>
-        // </header>
-        // <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
-        // </div>
-        // `)
         const el = $("<app-window>").attr({
             "data-name": name,
-            "data-theme": themecolour
+            "data-theme": themecolour,
         })
-        const height = $(window).height() * 0.6
-        const width = $(window).width() * 0.6
-        el.find(".app__header").css("width", width)
         el.append($("<iframe>").attr({
             src: path.resolve(dirs.store, "appdata", id, root || "", start),
             frameborder: 0,
-            height,
-            width,
-        }).css({
-            resize: "both",
-        }))
-        new ResizeObserver((entries) => {
-            entries.forEach(({
-                contentRect,
-            }) => {
-                el.find(".app__header").css("width", contentRect.width)
-            })
-        }).observe(el.find("iframe").get(0))
+        }).addClass("resizable"))
 
-        if (isColour(themecolour)) el.find(".app__header").css("background-color", )
-
-        el.appendTo(".main__content").makeDraggable()
-        el.find(".app__close").click(() => el.remove())
-
-        mdc.autoInit(el.get(0))
-        el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
-            MDCRipple,
-        }) => MDCRipple.unbounded = true)
+        el.appendTo(".main__content")
     }
 
     $(".app__menu").get(0).MDCMenu.hoistMenuToBody()
@@ -463,5 +485,23 @@ window.onload = () => {
         icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
-    }, false)
+    }, {
+        alert: false,
+        internal: true
+    })
+
+    installApp({
+        type: "ramm-app",
+        spec: 0,
+        id: "terminal",
+        name: "Terminal",
+        source: "https://github.com/Richienb/ros-calculator/archive/master.zip",
+        root: "ros-calculator-master",
+        icon: "resources/icon-48x48.png",
+        start: "index.html",
+        themecolour: "#4285f4",
+    }, {
+        alert: false,
+        internal: true
+    })
 }
