@@ -204,6 +204,10 @@ class AppWindow extends HTMLElement {
                 })
             }).observe(el.find(".app__content .resizable").get(0))
 
+            host.mousedown(() => {
+                $("app-window").css("z-index", 0)
+                host.css("z-index", 1)
+            })
             mdc.autoInit(el.get(0))
             el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
                 MDCRipple,
@@ -284,18 +288,21 @@ window.onload = () => {
         }
     }
 
-    const loadApp = (conf) => {
-        const el = $(".drawer__user").append(`
+    const loadApp = (conf, {
+        internal
+    }) => {
+        const el = $(`
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
-                    <img src="${conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="${conf.name} icon" height="24" width="24">
+                    <img src="${conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="App icon" height="24" width="24">
                 </button>
                 <p class="drawer__title mdc-typography--caption">${conf.name}</p>
             </div>
         `)
         el.find(".drawer__icon").click(() => launchApp(conf))
-        mdc.autoInit($(".drawer__user").children().last().get(0))
-        $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
+        $(".drawer__user").append(el)
+        mdc.autoInit(el.get(0))
+        el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
             MDCRipple,
         }) => MDCRipple.unbounded = true)
     }
@@ -453,13 +460,15 @@ window.onload = () => {
         root,
         start,
         themecolour,
+    }, {
+        internal
     }) => {
         const el = $("<app-window>").attr({
             "data-name": name,
             "data-theme": themecolour,
         })
         el.append($("<iframe>").attr({
-            src: path.resolve(dirs.store, "appdata", id, root || "", start),
+            src: internal ? path.join(root, start) : path.resolve(dirs.store, "appdata", id, root || "", start),
             frameborder: 0,
         }).addClass("resizable"))
 
@@ -480,8 +489,8 @@ window.onload = () => {
         spec: 0,
         id: "ros-calculator",
         name: "ROS Calculator",
-        source: "https://github.com/Richienb/ros-calculator/archive/master.zip",
-        root: "ros-calculator-master",
+        source: "ros-calculator",
+        root: "",
         icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
@@ -495,8 +504,8 @@ window.onload = () => {
         spec: 0,
         id: "terminal",
         name: "Terminal",
-        source: "https://github.com/Richienb/ros-calculator/archive/master.zip",
-        root: "ros-calculator-master",
+        source: "terminal",
+        root: "",
         icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
