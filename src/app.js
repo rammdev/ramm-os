@@ -288,18 +288,16 @@ window.onload = () => {
         }
     }
 
-    const loadApp = (conf, {
-        internal
-    }) => {
+    const loadApp = (conf, internal = false) => {
         const el = $(`
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
-                    <img src="${conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="App icon" height="24" width="24">
+                    <img src="${internal ? path.join(conf.root, conf.icon) : conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="App icon" height="24" width="24" onerror="if (this.src != 'generic.svg') this.src = 'generic.svg';">
                 </button>
                 <p class="drawer__title mdc-typography--caption">${conf.name}</p>
             </div>
         `)
-        el.find(".drawer__icon").click(() => launchApp(conf))
+        el.find(".drawer__icon").click(() => launchApp(conf, internal))
         $(".drawer__user").append(el)
         mdc.autoInit(el.get(0))
         el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
@@ -333,7 +331,7 @@ window.onload = () => {
                                         start: "index.html",
                                     }
                                     appsdb.set(conf.id, c)
-                                    loadApp(c)
+                                    loadApp(c, internal)
                                     if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
                                 })
                             } else {
@@ -341,7 +339,7 @@ window.onload = () => {
                                     id: body,
                                     name: body,
                                     start: "index.html",
-                                })
+                                }, internal)
                                 if (alert) snackBarMessage("App already installed!")
                             }
                         })
@@ -353,12 +351,12 @@ window.onload = () => {
             if (conf.spec !== 0) return
             if (appsdb.has(conf.id)) {
                 if (alert) snackBarMessage("App already installed!")
-                loadApp(conf)
+                loadApp(conf, internal)
                 return
             }
             if (internal) {
                 appsdb.set(conf.id, conf)
-                loadApp(conf)
+                loadApp(conf, internal)
             } else {
                 const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
                 request(conf.source, (err, _res, _body) => {
@@ -369,7 +367,7 @@ window.onload = () => {
                         if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                     })
                     appsdb.set(conf.id, conf)
-                    loadApp(conf)
+                    loadApp(conf, internal)
                     if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
                 }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
             }
@@ -455,14 +453,14 @@ window.onload = () => {
     }
 
     const launchApp = ({
-        name,
-        id,
-        root,
-        start,
-        themecolour,
-    }, {
-        internal
-    }) => {
+            name,
+            id,
+            root,
+            start,
+            themecolour,
+        },
+        internal = false
+    ) => {
         const el = $("<app-window>").attr({
             "data-name": name,
             "data-theme": themecolour,
@@ -489,8 +487,8 @@ window.onload = () => {
         spec: 0,
         id: "ros-calculator",
         name: "ROS Calculator",
-        source: "ros-calculator",
-        root: "",
+        source: "",
+        root: "apps/ros-calculator",
         icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
@@ -504,8 +502,8 @@ window.onload = () => {
         spec: 0,
         id: "terminal",
         name: "Terminal",
-        source: "terminal",
-        root: "",
+        source: "",
+        root: "apps/terminal",
         icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
