@@ -93,6 +93,138 @@ populateDirectory(dirs.store)
 
 import * as mdc from "material-components-web"
 
+class AppWindow extends HTMLElement {
+    constructor() {
+        super()
+
+        const eln = this.attachShadow({
+            mode: "open",
+        })
+
+        const el = $(eln)
+        const host = $(eln.host)
+
+        el.prepend(`
+            <link rel="stylesheet" href="..\\node_modules\\material-components-web\\dist\\material-components-web.min.css">
+            <style>
+                .app__container {
+                    position: absolute;
+                    background-color: white;
+                    resize: both;
+                }
+
+                .app__drawer {
+                    z-index: 6;
+                }
+
+                .app__header {
+                    z-index: 0;
+                    position: absolute;
+                    top: 0;
+                }
+
+                .resizable {
+                    resize: both;
+                }
+
+                ::-webkit-scrollbar {
+                  border-radius: 100px;
+                  background-color: transparent;
+                  width: 8px;
+                  height: 8px;
+                }
+
+                ::-webkit-scrollbar-button {
+                  height: 0;
+                  width: 0;
+                }
+
+                ::-webkit-scrollbar-corner {
+                  background-color: transparent;
+                }
+
+                ::-webkit-scrollbar-thumb {
+                  border-radius: 100px;
+                  background-color: rgba(0, 0, 0, 0.2);
+                  min-height: 28px;
+                }
+
+                ::-webkit-scrollbar-thumb:hover {
+                  background-color: rgba(0, 0, 0, 0.4);
+                }
+
+                ::-webkit-scrollbar-thumb:active {
+                  background-color: rgba(0, 0, 0, 0.5);
+                }
+
+                ::-webkit-scrollbar-track {
+                  background-clip: padding-box;
+                  border-width: 0 0 0 4px;
+                }
+            </style>
+            <div class="app__container mdc-elevation--z8">
+            <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
+                <div class="mdc-top-app-bar__row">
+                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                        <span class="mdc-top-app-bar__title">App</span> </section>
+                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                        <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
+                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z"/>
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                            </svg>
+                        </button>
+                    </section>
+                </div>
+            </header>
+            <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
+            <div class="app__content"></div>
+            </div>
+            <script src="..\\node_modules\\material-components-web\\dist\\material-components-web.min.js"></script>
+        `)
+
+        $(this).ready(() => {
+            $(eln.host.innerHTML).appendTo(el.find(".app__content"))
+            host.empty()
+
+            el.makeDraggable()
+
+            el.find(".app__content .resizable").get(0)
+            el.find(".mdc-top-app-bar__title").text(host.attr("data-name"))
+
+            const themecolour = host.attr("data-theme")
+            if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
+
+            new ResizeObserver((entries) => {
+                entries.forEach(({
+                    contentRect,
+                }) => {
+                    el.find(".app__header, .app__container").css("width", contentRect.width)
+                    el.find(".app__content").css("height", contentRect.height)
+                })
+            }).observe(el.find(".app__content .resizable").get(0))
+
+            host.mousedown(() => {
+                $("app-window").css("z-index", 0)
+                host.css("z-index", 1)
+            })
+            mdc.autoInit(el.get(0))
+            el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
+                MDCRipple,
+            }) => MDCRipple.unbounded = true)
+
+            el.find(".app__close").click(() => host.remove())
+
+            const height = $(window).height() * 0.5
+            const width = $(window).width() * 0.6
+            el.find(".app__header, .app__container, .resizable").css("width", width)
+            el.find(".app__content, .resizable").css("height", height)
+        })
+    }
+}
+
+customElements.define("app-window", AppWindow)
+
 window.onload = () => {
     window.$ = require("jquery")
 
@@ -156,77 +288,89 @@ window.onload = () => {
         }
     }
 
-    const loadApp = (conf) => {
-        const el = $(".drawer__user").append(`
+    const loadApp = (conf, internal = false) => {
+        const el = $(`
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
-                    <img src="${conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="${conf.name} icon" height="24" width="24">
+                    <img src="${internal ? path.join(conf.root, conf.icon) : conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="App icon" height="24" width="24" onerror="if (this.src != 'generic.svg') this.src = 'generic.svg';">
                 </button>
                 <p class="drawer__title mdc-typography--caption">${conf.name}</p>
             </div>
         `)
-        el.find(".drawer__icon").click(() => launchApp(conf))
-        mdc.autoInit($(".drawer__user").children().last().get(0))
-        $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
+        el.find(".drawer__icon").click(() => launchApp(conf, internal))
+        $(".drawer__user").append(el)
+        mdc.autoInit(el.get(0))
+        el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
             MDCRipple,
         }) => MDCRipple.unbounded = true)
     }
 
-    const installApp = (conf, notify = true) => {
+    const installApp = (conf, {
+        alert = true,
+        internal = false,
+    } = {}) => {
         if (isUrl(conf)) {
             urlExists(url.resolve(conf, "ramm.app.json")).then((exists) => {
-                if (exists) {requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                    installApp(body)
-                })}
-                else {request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                    fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, (err) => {
-                        if (err) {
-                            scrape({
-                                urls: [conf],
-                                directory: path.join(dirs.store, "appdata", body),
-                            }).then((_res) => {
-                                const c = {
+                if (exists) {
+                    requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
+                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        installApp(body)
+                    })
+                } else {
+                    request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
+                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, (err) => {
+                            if (err) {
+                                scrape({
+                                    urls: [conf],
+                                    directory: path.join(dirs.store, "appdata", body),
+                                }).then((_res) => {
+                                    const c = {
+                                        id: body,
+                                        name: body,
+                                        start: "index.html",
+                                    }
+                                    appsdb.set(conf.id, c)
+                                    loadApp(c, internal)
+                                    if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                                })
+                            } else {
+                                loadApp({
                                     id: body,
                                     name: body,
                                     start: "index.html",
-                                }
-                                appsdb.set(conf.id, c)
-                                loadApp(c)
-                                if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
-                            })
-                        } else {
-                            loadApp({
-                                id: body,
-                                name: body,
-                                start: "index.html",
-                            })
-                            if (notify) snackBarMessage("App already installed!")
-                        }
+                                }, internal)
+                                if (alert) snackBarMessage("App already installed!")
+                            }
+                        })
                     })
-                })}
+                }
             })
         } else {
             if (conf.type !== "ramm-app") return
             if (conf.spec !== 0) return
             if (appsdb.has(conf.id)) {
-                if (notify) snackBarMessage("App already installed!")
-                loadApp(conf)
+                if (alert) snackBarMessage("App already installed!")
+                loadApp(conf, internal)
                 return
             }
-            const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
-            request(conf.source, (err, _res, _body) => {
-                if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                extract(path.join(dirs.temp, filename), {
-                    dir: path.join(dirs.store, "appdata", conf.id),
-                }).then((err) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
-                })
+            if (internal) {
                 appsdb.set(conf.id, conf)
-                loadApp(conf)
-                if (notify) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
-            }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
+                loadApp(conf, internal)
+            } else {
+                const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
+                request(conf.source, (err, _res, _body) => {
+                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    extract(path.join(dirs.temp, filename), {
+                        dir: path.join(dirs.store, "appdata", conf.id),
+                    }).then((err) => {
+                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    })
+                    appsdb.set(conf.id, conf)
+                    loadApp(conf, internal)
+                    if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
+            }
         }
     }
 
@@ -294,9 +438,11 @@ window.onload = () => {
             pos2 = pos4 - e.clientY
             pos3 = e.clientX
             pos4 = e.clientY
-            this.css({
-                top: `${this.offset().top - pos2}px`,
-                left: `${this.offset().left - pos1}px`,
+            const el = $(this.get(0).host || this)
+            const vals = el.offset()
+            el.css({
+                top: `${vals.top - pos2}px`,
+                left: `${vals.left - pos1}px`,
             })
         }
 
@@ -307,59 +453,24 @@ window.onload = () => {
     }
 
     const launchApp = ({
-        name,
-        id,
-        root,
-        start,
-        themecolour,
-    }) => {
-        const el = $(`
-        <div class="app__container mdc-elevation--z8">
-        <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
-            <div class="mdc-top-app-bar__row">
-                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <span class="mdc-top-app-bar__title">${name}</span> </section>
-                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-                    <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
-                        <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="none" d="M0 0h24v24H0V0z"/>
-                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-                        </svg>
-                    </button>
-                </section>
-            </div>
-        </header>
-        <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
-        </div>
-        `)
-        const height = $(window).height() * 0.6
-        const width = $(window).width() * 0.6
-        el.find(".app__header").css("width", width)
+            name,
+            id,
+            root,
+            start,
+            themecolour,
+        },
+        internal = false
+    ) => {
+        const el = $("<app-window>").attr({
+            "data-name": name,
+            "data-theme": themecolour,
+        })
         el.append($("<iframe>").attr({
-            src: path.resolve(dirs.store, "appdata", id, root || "", start),
+            src: internal ? path.join(root, start) : path.resolve(dirs.store, "appdata", id, root || "", start),
             frameborder: 0,
-            height,
-            width,
-        }).css({
-            resize: "both",
-        }))
-        new ResizeObserver((entries) => {
-            entries.forEach(({
-                contentRect,
-            }) => {
-                el.find(".app__header").css("width", contentRect.width)
-            })
-        }).observe(el.find("iframe").get(0))
+        }).addClass("resizable"))
 
-        if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
-
-        el.appendTo(".main__content").makeDraggable()
-        el.find(".app__close").click(() => el.remove())
-
-        mdc.autoInit(el.get(0))
-        el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
-            MDCRipple,
-        }) => MDCRipple.unbounded = true)
+        el.appendTo(".main__content")
     }
 
     $(".app__menu").get(0).MDCMenu.hoistMenuToBody()
@@ -376,10 +487,28 @@ window.onload = () => {
         spec: 0,
         id: "ros-calculator",
         name: "ROS Calculator",
-        source: "https://github.com/Richienb/ros-calculator/archive/master.zip",
-        root: "ros-calculator-master",
+        source: "",
+        root: "apps/ros-calculator",
         icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
-    }, false)
+    }, {
+        alert: false,
+        internal: true
+    })
+
+    installApp({
+        type: "ramm-app",
+        spec: 0,
+        id: "terminal",
+        name: "Terminal",
+        source: "",
+        root: "apps/terminal",
+        icon: "resources/icon-48x48.png",
+        start: "index.html",
+        themecolour: "#4285f4",
+    }, {
+        alert: false,
+        internal: true
+    })
 }
