@@ -113,6 +113,11 @@ class AppWindow extends HTMLElement {
                     resize: both;
                 }
 
+                .limit-size {
+                    min-width: 200px;
+                    min-height: 200px;
+                }
+
                 .app__drawer {
                     z-index: 6;
                 }
@@ -121,6 +126,7 @@ class AppWindow extends HTMLElement {
                     z-index: 0;
                     position: absolute;
                     top: 0;
+                    min-width: 200px;
                 }
 
                 .resizable {
@@ -162,7 +168,7 @@ class AppWindow extends HTMLElement {
                   border-width: 0 0 0 4px;
                 }
             </style>
-            <div class="app__container mdc-elevation--z8">
+            <div class="limit-size app__container mdc-elevation--z8">
             <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
                 <div class="mdc-top-app-bar__row">
                     <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
@@ -184,10 +190,16 @@ class AppWindow extends HTMLElement {
         `)
 
         $(this).ready(() => {
-            $(eln.host.innerHTML).appendTo(el.find(".app__content"))
-            host.empty()
+            const apc = el.find(".app__content").get(0).attachShadow({
+                mode: "open",
+            })
 
-            el.makeDraggable()
+            $(apc).append(eln.host.innerHTML)
+
+            // $(eln.host.innerHTML).appendTo(el.find(".app__content"))
+            host.empty()
+            console.log(eln.host)
+            $(eln.host).makeDraggable()
 
             el.find(".app__content .resizable").get(0)
             el.find(".mdc-top-app-bar__title").text(host.attr("data-name"))
@@ -208,6 +220,7 @@ class AppWindow extends HTMLElement {
                 $("app-window").css("z-index", 0)
                 host.css("z-index", 1)
             })
+
             mdc.autoInit(el.get(0))
             el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
                 MDCRipple,
@@ -465,12 +478,14 @@ window.onload = () => {
             "data-name": name,
             "data-theme": themecolour,
         })
-        el.append($("<iframe>").attr({
-            src: internal ? path.join(root, start) : path.resolve(dirs.store, "appdata", id, root || "", start),
-            frameborder: 0,
-        }).addClass("resizable"))
+        fs.readFile(internal ? path.resolve(__dirname, root, start) : path.resolve(dirs.store, "appdata", id, root || "", start), 'utf8', (err, data) => {
+            $(data).addClass("resizable").appendTo(".main__content").appendTo(el)
+        })
+        // el.append($("<iframe>").attr({
+        //     src: internal ? path.join(root, start) : path.resolve(dirs.store, "appdata", id, root || "", start),
+        //     frameborder: 0,
+        // }).addClass("resizable limit-size"))
 
-        el.appendTo(".main__content")
     }
 
     $(".app__menu").get(0).MDCMenu.hoistMenuToBody()
