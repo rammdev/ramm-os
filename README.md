@@ -22,6 +22,17 @@ You can customise these options by creating a `ramm.app.json` in the root of you
 }
 ```
 
+You can also specify a packages field that acts like a `package.json` dependencies field:
+
+```json
+{
+    "packages": {
+        "bluebird": "^3.5.5",
+        "dayjs": "^1.8.14"
+    }
+}
+```
+
 ### Please note
 
 -   The icon will be scaled down to 24x24px.

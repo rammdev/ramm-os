@@ -1,23 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.6.2/css/jquery.terminal.min.css" integrity="sha256-hgWXrLWe3PFozfdODLZYGOc7/yrLBf3kr2ypALwtmXc=" crossorigin="anonymous" />
 </head>
 
 <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>
-        document.write(process.versions.node)
-    </script>,
-    Chromium <script>
-        document.write(process.versions.chrome)
-    </script>,
-    and Electron <script>
-        document.write(process.versions.electron)
-    </script>.
+    <div id="terminal"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.6.2/js/jquery.terminal.min.js" integrity="sha256-evf8gGa+X6gZegv66KiARxxVdubJj4xV1XIh4vZfJY8=" crossorigin="anonymous"></script>
+    <script>
+        $(($, undefined) => {
+            $('#terminal').terminal(function(command) {
+                if (command !== '') {
+                    try {
+                        const result = window.eval(command);
+                        if (result !== undefined) {
+                            this.echo(new String(result));
+                        }
+                    } catch (e) {
+                        this.error(new String(e));
+                    }
+                } else {
+                    this.echo('');
+                }
+            }, {
+                greetings: 'RAMM OS Terminal',
+                name: 'ramm_os_terminal',
+                height: 200,
+                prompt: '> '
+            });
+        });
+    </script>
 </body>
 
 </html>
