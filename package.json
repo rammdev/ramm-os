@@ -52,31 +52,34 @@
         "eslint-plugin-jsx-a11y": "^6.2.1",
         "eslint-plugin-vue": "^5.2.2"
     },
+    "resolutions": {
+        "js-yaml": "^3.13.0",
+        "hoek": "^5.0.3",
+        "lodash": "^4.17.11",
+        "minimatch": "^3.0.2",
+        "uglify-js": "^2.4.24",
+        "semver": "^4.3.2",
+        "mime": "^2.0.3",
+        "clean-css": "^4.1.11"
+    },
     "config": {
         "forge": {
             "packagerConfig": {},
-            "makers": [
-                {
-                    "name": "@electron-forge/maker-squirrel",
-                    "config": {
-                        "name": "ramm_os"
-                    }
-                },
-                {
-                    "name": "@electron-forge/maker-zip",
-                    "platforms": [
-                        "darwin"
-                    ]
-                },
-                {
-                    "name": "@electron-forge/maker-deb",
-                    "config": {}
-                },
-                {
-                    "name": "@electron-forge/maker-rpm",
-                    "config": {}
+            "makers": [{
+                "name": "@electron-forge/maker-squirrel",
+                "config": {
+                    "name": "ramm_os"
                 }
-            ]
+            }, {
+                "name": "@electron-forge/maker-zip",
+                "platforms": ["darwin"]
+            }, {
+                "name": "@electron-forge/maker-deb",
+                "config": {}
+            }, {
+                "name": "@electron-forge/maker-rpm",
+                "config": {}
+            }]
         }
     },
     "publishConfig": {
