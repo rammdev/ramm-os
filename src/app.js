@@ -1,6 +1,6 @@
 // setImmediate Polyfill
 const _setImmediate = setImmediate
-process.once("loaded", () => global.setImmediate = _setImmediate)
+process.once("loaded", () => (global.setImmediate = _setImmediate))
 
 import electron from "electron"
 
@@ -24,13 +24,12 @@ const dirs = {
 }
 
 Array.prototype.i = function(val) {
-    if (val < 0) return this[this.length - Math.abs(val)]
+    if (val < 0)
+    {return this[this.length - Math.abs(val)]}
     return this[val]
 }
 
-import {
-    Promise,
-} from "bluebird"
+import Promise from "bluebird"
 
 // Provide improved filesystem functions
 const fs = require("graceful-fs").gracefulify(require("fs"))
@@ -46,48 +45,45 @@ const appsdb = new Store({
     encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ",
 })
 
-const db = new Store({
-    cwd: path.join("ramm-os", "settings"),
-    encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
-})
+// const db = new Store({
+//     cwd: path.join("ramm-os", "settings"),
+//     encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
+// })
 
 import isColour from "is-color"
 
-const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36"
+import {version} from "../package.json"
 
 const request = require("request").defaults({
     gzip: true,
     method: "GET",
     headers: {
-        "User-Agent": userAgent,
+        "User-Agent": `RAMM OS ${version}`,
     },
 })
 
-const urlExists = (url) => new Promise((resolve, reject) => request.head(url).on("response", (res) => resolve(res.statusCode.toString()[0] === "2")).on("error", (err) => reject(err)))
+const urlExists = (url) => new Promise((resolve, reject) => request.head(url).on("response", ({statusCode}) => resolve(statusCode.toString()[0] === "2")).on("error", (err) => reject(err)))
 
-const requestjson = request.defaults({
-    json: true,
-})
+const requestjson = request.defaults({json: true})
 
-const githubapi = request.defaults({
-    json: true,
-    headers: {
-        "Accept": "application/vnd.github.v3+json",
-    },
-})
+// const githubapi = request.defaults({
+//     json: true,
+//     headers: {
+//         Accept: "application/vnd.github.v3+json",
+//     },
+// })
 
-const populateDirectory = (dir) => new Promise((resolve, reject) =>
-    fs.access(dir, fs.constants.F_OK, (err) => {
-        if (err) {
-            fs.mkdir(dir, {
-                recursive: true,
-            }, (err) => {
-                if (err) reject(err)
-                resolve(true)
-            })
-        } else resolve(false)
-    })
-)
+const populateDirectory = (dir) => new Promise((resolve, reject) => fs.access(dir, fs.constants.F_OK, (err) => {
+    if (err) {
+        fs.mkdir(dir, {
+            recursive: true,
+        }, (err) => {
+            if (err) reject(err)
+            resolve(true)
+        })
+    }
+    else resolve(false)
+}))
 populateDirectory(dirs.temp)
 populateDirectory(dirs.store)
 
@@ -97,9 +93,7 @@ class AppWindow extends HTMLElement {
     constructor() {
         super()
 
-        const eln = this.attachShadow({
-            mode: "open",
-        })
+        const eln = this.attachShadow({mode: "open"})
 
         const el = $(eln)
         const host = $(eln.host)
@@ -202,9 +196,7 @@ class AppWindow extends HTMLElement {
             if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
 
             new ResizeObserver((entries) => {
-                entries.forEach(({
-                    contentRect,
-                }) => {
+                entries.forEach(({contentRect}) => {
                     el.find(".app__header, .app__container").css("width", contentRect.width)
                     el.find(".app__content").css("height", contentRect.height)
                 })
@@ -215,9 +207,7 @@ class AppWindow extends HTMLElement {
                 host.css("z-index", 1)
             })
             mdc.autoInit(el.get(0))
-            el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
-                MDCRipple,
-            }) => MDCRipple.unbounded = true)
+            el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {MDCRipple}) => (MDCRipple.unbounded = true))
 
             el.find(".app__close").click(() => host.remove())
 
@@ -242,9 +232,7 @@ window.onload = () => {
     mdc.autoInit()
 
     // Fix the ripples of each icon button
-    $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {
-        MDCRipple,
-    }) => MDCRipple.unbounded = true)
+    $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {MDCRipple}) => (MDCRipple.unbounded = true))
 
     $(".action__close").click(() => mainWindow.close())
     $(".action__full").click(() => {
@@ -276,7 +264,7 @@ window.onload = () => {
     $(window).on("resize", windowResized)
     $(window).trigger("resize")
 
-    $(".footer__apps").click(() => $(".app__drawer").get(0).MDCMenu.open = !$(".app__drawer").get(0).MDCMenu.open)
+    $(".footer__apps").click(() => ($(".app__drawer").get(0).MDCMenu.open = !$(".app__drawer").get(0).MDCMenu.open))
 
     // Ping sound
     const pingSound = new Audio("ping.ogg")
@@ -295,10 +283,16 @@ window.onload = () => {
     }
 
     const loadApp = (conf, internal = false) => {
-        const el = $(`
+        const icon = (() => {
+            if (!conf.icon) return "generic.svg"
+            if (internal) return path.join(conf.root, conf.icon)
+            else path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon)
+        })()
+        const el = $(
+            `
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${conf.name}" data-mdc-auto-init="MDCRipple">
-                    <img src="${internal ? path.join(conf.root, conf.icon) : conf.icon ? path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon) : "generic.svg"}" alt="App icon" height="24" width="24" onerror="if (this.src != 'generic.svg') this.src = 'generic.svg';">
+                    <img src="${icon}" alt="App icon" height="24" width="24" onerror="if (this.src != 'generic.svg') this.src = 'generic.svg';">
                 </button>
                 <p class="drawer__title mdc-typography--caption">${conf.name}</p>
             </div>
@@ -306,9 +300,7 @@ window.onload = () => {
         el.find(".drawer__icon").click(() => launchApp(conf, internal))
         $(".drawer__user").append(el)
         mdc.autoInit(el.get(0))
-        el.find(`.mdc-icon-button[data-mdc-auto-init="MDCRipple"]`).each((_, {
-            MDCRipple,
-        }) => MDCRipple.unbounded = true)
+        el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, {MDCRipple}) => (MDCRipple.unbounded = true))
     }
 
     const installApp = (conf, {
@@ -319,12 +311,14 @@ window.onload = () => {
             urlExists(url.resolve(conf, "ramm.app.json")).then((exists) => {
                 if (exists) {
                     requestjson(url.resolve(conf, "ramm.app.json"), (err, _res, body) => {
-                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        if (err)
+                        {snackBarMessage(`Something bad just happened. (${err.message})`)}
                         installApp(body)
                     })
                 } else {
                     request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`, (err, _res, body) => {
-                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        if (err)
+                        {snackBarMessage(`Something bad just happened. (${err.message})`)}
                         fs.access(path.join(dirs.store, "appdata", body), fs.constants.F_OK, (err) => {
                             if (err) {
                                 scrape({
@@ -338,7 +332,8 @@ window.onload = () => {
                                     }
                                     appsdb.set(conf.id, c)
                                     loadApp(c, internal)
-                                    if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                                    if (alert)
+                                    {snackBarMessage(`Finished installing ${conf.name}.`, 0.1)}
                                 })
                             } else {
                                 loadApp({
@@ -346,17 +341,21 @@ window.onload = () => {
                                     name: body,
                                     start: "index.html",
                                 }, internal)
-                                if (alert) snackBarMessage("App already installed!")
+                                if (alert)
+                                {snackBarMessage("App already installed!")}
                             }
                         })
                     })
                 }
             })
         } else {
-            if (conf.type !== "ramm-app") return
-            if (conf.spec !== 0) return
+            if (conf.type !== "ramm-app")
+            {return}
+            if (conf.spec !== 0)
+            {return}
             if (appsdb.has(conf.id)) {
-                if (alert) snackBarMessage("App already installed!")
+                if (alert)
+                {snackBarMessage("App already installed!")}
                 loadApp(conf, internal)
                 return
             }
@@ -366,15 +365,18 @@ window.onload = () => {
             } else {
                 const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
                 request(conf.source, (err, _res, _body) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    if (err)
+                    {snackBarMessage(`Something bad just happened. (${err.message})`)}
                     extract(path.join(dirs.temp, filename), {
                         dir: path.join(dirs.store, "appdata", conf.id),
                     }).then((err) => {
-                        if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                        if (err)
+                        {snackBarMessage(`Something bad just happened. (${err.message})`)}
                     })
                     appsdb.set(conf.id, conf)
                     loadApp(conf, internal)
-                    if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
+                    if (alert)
+                    {snackBarMessage(`Finished installing ${conf.name}.`, 0.1)}
                 }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
             }
         }
@@ -382,33 +384,35 @@ window.onload = () => {
 
     $(".install__start").click(() => $(".install__dialog").get(0).MDCDialog.open())
 
-    $(".install__dialog").get(0).MDCDialog.listen("MDCDialog:closing", ({
-        detail,
-    }) => {
-        // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
+    $(".install__dialog").get(0).MDCDialog.listen("MDCDialog:closing", ({detail}) => {
+    // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
         if (detail.action === "install") {
-            if ($(".install__uri").get(0).MDCTextField.value === "") return
+            if ($(".install__uri").get(0).MDCTextField.value === "")
+            {return}
             const uri = $(".install__uri").get(0).MDCTextField.value
             if (isUrl(uri)) {
                 installApp(uri)
                 return
             }
             const protocol = new URL(uri).protocol
-            if (protocol in ["http:", "https:"]) {
+            if (protocol in["http:", "https:"]) {
                 requestjson(uri, (err, _res, body) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    if (err)
+                    {snackBarMessage(`Something bad just happened. (${err.message})`)}
                     installApp(body)
                 })
             } else if (protocol === "json:") {
                 installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
             } else if (protocol === "file:") {
                 fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8", (err, data) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    if (err)
+                    {snackBarMessage(`Something bad just happened. (${err.message})`)}
                     installApp(JSON.parse(data))
                 })
             } else {
                 fs.readFile(path.resolve(uri), "utf8", (err, data) => {
-                    if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
+                    if (err)
+                    {snackBarMessage(`Something bad just happened. (${err.message})`)}
                     installApp(JSON.parse(data))
                 })
             }
@@ -459,20 +463,17 @@ window.onload = () => {
     }
 
     const launchApp = ({
-            name,
-            id,
-            root,
-            start,
-            themecolour,
-        },
-        internal = false
-    ) => {
-        const el = $("<app-window>").attr({
-            "data-name": name,
-            "data-theme": themecolour,
-        })
+        name,
+        id,
+        root,
+        start,
+        themecolour,
+    }, internal = false) => {
+        const el = $("<app-window>").attr({"data-name": name, "data-theme": themecolour})
         el.append($("<iframe>").attr({
-            src: internal ? path.join(root, start) : path.resolve(dirs.store, "appdata", id, root || "", start),
+            src: internal
+                ? path.join(root, start)
+                : path.resolve(dirs.store, "appdata", id, root || "", start),
             frameborder: 0,
         }).addClass("resizable limit-size"))
 
@@ -500,7 +501,7 @@ window.onload = () => {
         themecolour: "#4285f4",
     }, {
         alert: false,
-        internal: true
+        internal: true,
     })
 
     installApp({
@@ -510,11 +511,11 @@ window.onload = () => {
         name: "Terminal",
         source: "",
         root: "apps/terminal",
-        icon: "resources/icon-48x48.png",
+        // icon: "resources/icon-48x48.png",
         start: "index.html",
         themecolour: "#4285f4",
     }, {
         alert: false,
-        internal: true
+        internal: true,
     })
 }

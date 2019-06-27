@@ -21,6 +21,8 @@
         "quotes": ["error", "double"],
         "semi": ["error", "never"],
         "brace-style": 0,
-        "max-len": 0
+        "max-len": 0,
+        "require-jsdoc": 0,
+        "no-extend-native": 0
     }
 }
