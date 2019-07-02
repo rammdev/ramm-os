@@ -1,4 +1,4 @@
-# RAMM OS
+# RAMM OS ![Build Status](https://img.shields.io/travis/com/rammdev/ramm-os/master.svg?style=for-the-badge)
 
 Above the clouds, on a mission to provide the development tools of tomorrow with a powerful production team.
 
