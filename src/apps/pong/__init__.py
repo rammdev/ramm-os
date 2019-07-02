@@ -23,5 +23,42 @@ PADDLE_B.shapesize(stretch_wid=5, stretch_len=1)
 PADDLE_B.penup()
 PADDLE_B.goto(350, 0)
 
+ball = turtle.Turtle()
+ball.speed(0)
+ball.shape("square")
+ball.color("white")
+ball.penup()
+ball.goto(0, 0)
+
+def PADDLE_A_up: turtle
+    y = PADDLE_A.ycor()
+    y += 20
+    PADDLE_A.sety(y)
+    
+    
+def PADDLE_A_down: turtle
+    y = PADDLE_A.ycor()
+    y -= 20
+    PADDLE_A.sety(y)
+
+
+def PADDLE_B_up: turtle
+    y = PADDLE_B.ycor()
+    y += 20
+    PADDLE_B.sety(y)
+
+    
+def PADDLE_B_down: turtle
+    y = PADDLE_B.ycor()
+    y -= 20
+    PADDLE_B.sety(y)
+
+
+wn.listen()
+wn.onkeypress(PADDLE_A_up, "w")
+wn.onkeypress(PADDLE_A_down, "s")
+wn.onkeypress(PADDLE_B_up, "Up")
+wn.onkeypress(PADDLE_B_down, "Down")
+
 while True:
     WN.update()
