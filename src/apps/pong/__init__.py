@@ -29,26 +29,30 @@ ball.shape("square")
 ball.color("white")
 ball.penup()
 ball.goto(0, 0)
+ball.dx = 2
+ball.dy = -2
 
-def PADDLE_A_up: turtle
+pen = turtle.Turtle()
+
+def PADDLE_A_up(): turtle
     y = PADDLE_A.ycor()
     y += 20
     PADDLE_A.sety(y)
     
     
-def PADDLE_A_down: turtle
+def PADDLE_A_down(): turtle
     y = PADDLE_A.ycor()
     y -= 20
     PADDLE_A.sety(y)
 
 
-def PADDLE_B_up: turtle
+def PADDLE_B_up(): turtle
     y = PADDLE_B.ycor()
     y += 20
     PADDLE_B.sety(y)
 
     
-def PADDLE_B_down: turtle
+def PADDLE_B_down(): turtle
     y = PADDLE_B.ycor()
     y -= 20
     PADDLE_B.sety(y)
@@ -62,3 +66,32 @@ wn.onkeypress(PADDLE_B_down, "Down")
 
 while True:
     WN.update()
+
+    ball.setx(ball.xcor() + ball.dx)
+    ball.sety(ball.ycor() + ball.dy)
+    
+    if ball.ycor() > 290:
+        ball.sety(290)
+        ball.dy *= -1
+        
+    if ball.ycor() < -290:
+        ball.sety(-290)
+        ball.dy *= -1
+        
+        
+    if ball.xcor() > 390:
+        ball.goto(0, 0)
+        ball.dx *= -1
+        
+    if ball.xcor() < -390:
+        ball.goto(0, 0)
+        ball.dx *= -1
+        
+        
+    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < PADDLE_B.ycor() + 40 and ball.ycor() > PADDLE_B.ycor() -40):
+        ball.setx(340)
+        ball.bx *= -1
+
+    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < PADDLE_A.ycor() + 40 and ball.ycor() > PADDLE_A.ycor() -40):
+        ball.setx(-340)
+        ball.bx *= -1
