@@ -1,14 +1,24 @@
-language: node_js
+matrix:
+  include:
+    - language: node_js
 
-node_js: lts/*
+      node_js: lts/*
 
-cache:
-  - npm
-  - yarn
-  
-before_install: npm i -g yarn
+      cache:
+        - npm
+        - yarn
 
-install: yarn install
+      before_install: npm i -g yarn
 
-script:
-  - yarn lint
+      install: yarn install
+
+      script: yarn lint
+
+    - language: generic
+
+      addons:
+        apt:
+          packages:
+            - pylint
+
+      script: find src -type f -name '__init__.py' | sed -r 's|/[^/]+$||' | sort | uniq | xargs pylint
