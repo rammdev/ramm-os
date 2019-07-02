@@ -1,3 +1,5 @@
+dist: xenial
+
 matrix:
   include:
     - language: node_js
@@ -14,11 +16,12 @@ matrix:
 
       script: yarn lint
 
-    - language: generic
+    - language: python
 
-      addons:
-        apt:
-          packages:
-            - pylint
+      python: 3.7
+
+      cache: pip
+
+      install: pip install pylint
 
       script: find src -type f -name '__init__.py' | sed -r 's|/[^/]+$||' | sort | uniq | xargs pylint

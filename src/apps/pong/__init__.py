@@ -3,7 +3,7 @@ import turtle
 
 WN = turtle.Screen()
 WN.title("Megapong")
-WN.bgcolour("black")
+WN.bgcolor("black")
 WN.setup(width=800, height=600)
 WN.tracer(0)
 
