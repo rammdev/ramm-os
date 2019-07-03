@@ -24,7 +24,7 @@ PADDLE_B.penup()
 PADDLE_B.goto(350, 0)
 
 BALL = turtle.Turtle()
-BALL.speed(0)
+BALL.speed(-1)
 BALL.shape("square")
 BALL.color("white")
 BALL.penup()
