@@ -26,7 +26,7 @@ const dirs = {
     ) // Storage directory
 }
 
-Array.prototype.i = function (val) {
+Array.prototype.i = function(val) {
     if (val < 0) {
         return this[this.length - Math.abs(val)]
     }
@@ -67,7 +67,7 @@ class AppWindow extends HTMLElement {
     constructor() {
         super()
 
-        const eln = this.attachShadow({ mode: "open" })
+        const eln = this.attachShadow({mode: "open"})
 
         const el = $(eln)
         const host = $(eln.host)
@@ -172,7 +172,7 @@ class AppWindow extends HTMLElement {
             }
 
             new ResizeObserver((entries) => {
-                entries.forEach(({ contentRect }) => {
+                entries.forEach(({contentRect}) => {
                     el.find(".app__header, .app__container").css(
                         "width",
                         contentRect.width
@@ -187,7 +187,7 @@ class AppWindow extends HTMLElement {
             })
             mdc.autoInit(el.get(0))
             el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-                (_, { MDCRipple }) => (MDCRipple.unbounded = true)
+                (_, {MDCRipple}) => (MDCRipple.unbounded = true)
             )
 
             el.find(".app__close").click(() => host.remove())
@@ -214,7 +214,7 @@ window.onload = () => {
 
     // Fix the ripples of each icon button
     $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-        (_, { MDCRipple }) => (MDCRipple.unbounded = true)
+        (_, {MDCRipple}) => (MDCRipple.unbounded = true)
     )
 
     $(".action__close").click(() => mainWindow.close())
@@ -288,13 +288,13 @@ window.onload = () => {
             `
             <div class="mdc-layout-grid__cell drawer__app">
                 <button class="drawer__icon mdc-icon-button" aria-label="${
-            conf.name
-            }" data-mdc-auto-init="MDCRipple">
+    conf.name
+}" data-mdc-auto-init="MDCRipple">
                     <img src="${icon}" alt="App icon" height="24" width="24" onerror="if (this.src != 'generic.svg') this.src = 'generic.svg';">
                 </button>
                 <p class="drawer__title mdc-typography--caption">${
-            conf.name
-            }</p>
+    conf.name
+}</p>
             </div>
         `
         )
@@ -302,22 +302,22 @@ window.onload = () => {
         $(".drawer__user").append(el)
         mdc.autoInit(el.get(0))
         el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-            (_, { MDCRipple }) => (MDCRipple.unbounded = true)
+            (_, {MDCRipple}) => (MDCRipple.unbounded = true)
         )
     }
 
-    const installApp = (conf, { alert = true, internal = false } = {}) => {
+    const installApp = (conf, {alert = true, internal = false} = {}) => {
         if (isUrl(conf)) {
             urlExists(url.resolve(conf, "ramm.app.json")).then((exists) => {
                 if (exists) {
                     requestjson(url.resolve(conf, "ramm.app.json"))
                         .then(() => installApp(body))
-                        .catch(({ message }) => snackBarMessage(`Something bad just happened. (${message})`))
+                        .catch(({message}) => snackBarMessage(`Something bad just happened. (${message})`))
                 } else {
                     request(`https://textance.herokuapp.com/rest/title/${encodeURI(conf)}`)
-                        .then(res => {
+                        .then((res) => {
                             fs.pathExists(path.join(dirs.store, "appdata", body))
-                                .then(exists => {
+                                .then((exists) => {
                                     if (!exists) {
                                         scrape({
                                             urls: [conf],
@@ -352,7 +352,7 @@ window.onload = () => {
                                     }
                                 })
                         })
-                        .catch(({ message }) => snackBarMessage(
+                        .catch(({message}) => snackBarMessage(
                             `Something bad just happened. (${err.message})`
                         ))
                 }
@@ -399,7 +399,7 @@ window.onload = () => {
 
     $(".install__dialog")
         .get(0)
-        .MDCDialog.listen("MDCDialog:closing", ({ detail }) => {
+        .MDCDialog.listen("MDCDialog:closing", ({detail}) => {
             // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
             if (detail.action === "install") {
                 if ($(".install__uri").get(0).MDCTextField.value === "") {
@@ -413,20 +413,20 @@ window.onload = () => {
                 const protocol = new URL(uri).protocol
                 if (protocol in ["http:", "https:"]) {
                     requestjson(uri)
-                        .then(body => installApp(body))
-                        .catch(({ message }) => snackBarMessage(`Something bad just happened. (${message})`))
+                        .then((body) => installApp(body))
+                        .catch(({message}) => snackBarMessage(`Something bad just happened. (${message})`))
                 } else if (protocol === "json:") {
                     installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
                 } else if (protocol === "file:") {
                     fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8")
-                        .then(data => installApp(JSON.parse(data)))
-                        .catch(({ message }) => snackBarMessage(
+                        .then((data) => installApp(JSON.parse(data)))
+                        .catch(({message}) => snackBarMessage(
                             `Something bad just happened. (${message})`
                         ))
                 } else {
                     fs.readFile(path.resolve(uri), "utf8")
-                        .then(data => installApp(JSON.parse(data)))
-                        .catch(({ message }) => snackBarMessage(
+                        .then((data) => installApp(JSON.parse(data)))
+                        .catch(({message}) => snackBarMessage(
                             `Something bad just happened. (${message})`
                         ))
                 }
@@ -440,7 +440,7 @@ window.onload = () => {
         console.warn("open-url", `You arrived from: ${url}`)
     })
 
-    $.fn.makeDraggable = function () {
+    $.fn.makeDraggable = function() {
         let pos1 = 0
         let pos2 = 0
         let pos3 = 0
@@ -477,7 +477,7 @@ window.onload = () => {
     }
 
     const launchApp = (
-        { name, id, root, start, themecolour },
+        {name, id, root, start, themecolour},
         internal = false
     ) => {
         const el = $("<app-window>").attr({
