@@ -23,75 +23,80 @@ PADDLE_B.shapesize(stretch_wid=5, stretch_len=1)
 PADDLE_B.penup()
 PADDLE_B.goto(350, 0)
 
-ball = turtle.Turtle()
-ball.speed(0)
-ball.shape("square")
-ball.color("white")
-ball.penup()
-ball.goto(0, 0)
-ball.dx = 2
-ball.dy = -2
+BALL = turtle.Turtle()
+BALL.speed(0)
+BALL.shape("square")
+BALL.color("white")
+BALL.penup()
+BALL.goto(0, 0)
+BALL.dx = 2
+BALL.dy = -2
 
-pen = turtle.Turtle()
-
-def PADDLE_A_up(): turtle
-    y = PADDLE_A.ycor()
-    y += 20
-    PADDLE_A.sety(y)
-    
-    
-def PADDLE_A_down(): turtle
-    y = PADDLE_A.ycor()
-    y -= 20
-    PADDLE_A.sety(y)
+PEN = turtle.Turtle()
 
 
-def PADDLE_B_up(): turtle
-    y = PADDLE_B.ycor()
-    y += 20
-    PADDLE_B.sety(y)
-
-    
-def PADDLE_B_down(): turtle
-    y = PADDLE_B.ycor()
-    y -= 20
-    PADDLE_B.sety(y)
+def paddle_a_up():
+    """Left paddle up."""
+    coords_y = PADDLE_A.ycor()
+    coords_y += 20
+    PADDLE_A.sety(coords_y)
 
 
-wn.listen()
-wn.onkeypress(PADDLE_A_up, "w")
-wn.onkeypress(PADDLE_A_down, "s")
-wn.onkeypress(PADDLE_B_up, "Up")
-wn.onkeypress(PADDLE_B_down, "Down")
+def paddle_a_down():
+    """Left paddle down."""
+    coords_y = PADDLE_A.ycor()
+    coords_y -= 20
+    PADDLE_A.sety(coords_y)
+
+
+def paddle_b_up():
+    """Right paddle up."""
+    c_y = PADDLE_B.ycor()
+    c_y += 20
+    PADDLE_B.sety(c_y)
+
+
+def paddle_b_down():
+    """Right paddle down."""
+    coords_y = PADDLE_B.ycor()
+    coords_y -= 20
+    PADDLE_B.sety(coords_y)
+
+
+WN.listen()
+WN.onkeypress(paddle_a_up, "w")
+WN.onkeypress(paddle_a_down, "s")
+WN.onkeypress(paddle_b_up, "Up")
+WN.onkeypress(paddle_b_down, "Down")
 
 while True:
     WN.update()
 
-    ball.setx(ball.xcor() + ball.dx)
-    ball.sety(ball.ycor() + ball.dy)
-    
-    if ball.ycor() > 290:
-        ball.sety(290)
-        ball.dy *= -1
-        
-    if ball.ycor() < -290:
-        ball.sety(-290)
-        ball.dy *= -1
-        
-        
-    if ball.xcor() > 390:
-        ball.goto(0, 0)
-        ball.dx *= -1
-        
-    if ball.xcor() < -390:
-        ball.goto(0, 0)
-        ball.dx *= -1
-        
-        
-    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < PADDLE_B.ycor() + 40 and ball.ycor() > PADDLE_B.ycor() -40):
-        ball.setx(340)
-        ball.bx *= -1
+    BALL.setx(BALL.xcor() + BALL.dx)
+    BALL.sety(BALL.ycor() + BALL.dy)
 
-    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < PADDLE_A.ycor() + 40 and ball.ycor() > PADDLE_A.ycor() -40):
-        ball.setx(-340)
-        ball.bx *= -1
+    if BALL.ycor() > 290:
+        BALL.sety(290)
+        BALL.dy *= -1
+
+    if BALL.ycor() < -290:
+        BALL.sety(-290)
+        BALL.dy *= -1
+
+    if BALL.xcor() > 390:
+        BALL.goto(0, 0)
+        BALL.dx *= -1
+
+    if BALL.xcor() < -390:
+        BALL.goto(0, 0)
+        BALL.dx *= -1
+
+    if BALL.xcor() > 340 and BALL.xcor() < 350 and BALL.ycor() \
+            < PADDLE_B.ycor() + 40 and BALL.ycor() > PADDLE_B.ycor() - 40:
+        BALL.setx(340)
+        BALL.dx *= -1
+
+    if BALL.xcor() < -340 and BALL.xcor() > -350 and BALL.ycor() \
+            < PADDLE_A.ycor() + 40 and BALL.ycor() > PADDLE_A.ycor() - 40:
+        BALL.setx(-340)
+        BALL.dx *= -1
