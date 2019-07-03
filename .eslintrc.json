@@ -23,6 +23,7 @@
         "brace-style": 0,
         "max-len": 0,
         "require-jsdoc": 0,
-        "no-extend-native": 0
+        "no-extend-native": 0,
+        "comma-dangle": 0
     }
 }
