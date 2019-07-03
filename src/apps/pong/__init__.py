@@ -32,8 +32,16 @@ BALL.goto(0, 0)
 BALL.dx = 2
 BALL.dy = -2
 
-PEN = turtle.Turtle()
+pen = turtle.Turtle()
+pen.peeed(0)
+pen.colour("white")
+pen.penup()
+pen.hideturtle()
+pen.goto(0, 260)
+pen.write("Player 1: 0  Player 2: 0", align="center", font=("Courier", 24, "Normal"))
 
+score_a = 0
+score_b = 0
 
 def paddle_a_up():
     """Left paddle up."""
@@ -86,11 +94,17 @@ while True:
     if BALL.xcor() > 390:
         BALL.goto(0, 0)
         BALL.dx *= -1
+        score_a += 1
+        pen.clear
+        pen.write("Player 1: {}  Player 2: {}".format(score_a, score_b), align="center", font=("Courier", 24, "Normal"))
 
     if BALL.xcor() < -390:
         BALL.goto(0, 0)
         BALL.dx *= -1
-
+        score_b += 1
+        pen.clear()
+        pen.write("Player 1: {}  Player 2: {}".format(score_a, score_b), align="center", font=("Courier", 24, "Normal"))
+        
     if BALL.xcor() > 340 and BALL.xcor() < 350 and BALL.ycor() \
             < PADDLE_B.ycor() + 40 and BALL.ycor() > PADDLE_B.ycor() - 40:
         BALL.setx(340)
