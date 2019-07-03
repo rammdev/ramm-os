@@ -4,6 +4,11 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.6.2/css/jquery.terminal.min.css" integrity="sha256-hgWXrLWe3PFozfdODLZYGOc7/yrLBf3kr2ypALwtmXc=" crossorigin="anonymous" />
+    <style>
+        #terminal {
+            min-height: 100vh;
+        }
+    </style>
 </head>
 
 <body>
@@ -11,26 +16,64 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.6.2/js/jquery.terminal.min.js" integrity="sha256-evf8gGa+X6gZegv66KiARxxVdubJj4xV1XIh4vZfJY8=" crossorigin="anonymous"></script>
     <script>
-        $(($, undefined) => {
-            $('#terminal').terminal(function(command) {
-                if (command !== '') {
-                    try {
-                        const result = window.eval(command);
-                        if (result !== undefined) {
-                            this.echo(new String(result));
-                        }
-                    } catch (e) {
-                        this.error(new String(e));
+        function realType(myVar) {
+            const argLength = arguments.length;
+
+            // validate arguments
+            if (argLength !== 1) {
+                throw new Error(`Expected 1 arguments, got ${argLength}`);
+            }
+
+            return ({})
+                .toString
+                .call(myVar)
+                .match(/\s([a-zA-Z]+)/)[1]
+                .toLowerCase();
+        };
+
+        function recur(obj) {
+            var result = {},
+                _tmp;
+            for (var i in obj) {
+                // enabledPlugin is too nested, also skip functions
+                if (i === 'enabledPlugin' || typeof obj[i] === 'function') {
+                    continue;
+                } else if (typeof obj[i] === 'object') {
+                    // get props recursively
+                    _tmp = recur(obj[i]);
+                    // if object is not {}
+                    if (Object.keys(_tmp).length) {
+                        result[i] = _tmp;
                     }
                 } else {
-                    this.echo('');
+                    // string, number or boolean
+                    result[i] = obj[i];
                 }
-            }, {
-                greetings: 'RAMM OS Terminal',
-                name: 'ramm_os_terminal',
-                height: 200,
-                prompt: '> '
-            });
+            }
+            return result;
+        }
+
+        $('#terminal').terminal(function(command) {
+            if (command !== '') {
+                try {
+                    const result = window.eval(command);
+                    if (realType(result) === "object")
+                        this.echo(JSON.stringify(recur(result)));
+                    else if (realType(result) === "array")
+                        this.echo(JSON.stringify(result));
+                    else
+                        this.echo(new String(result));
+                } catch (e) {
+                    this.error(new String(e));
+                }
+            } else {
+                this.echo('');
+            }
+        }, {
+            greetings: 'RAMM OS Terminal',
+            name: 'ramm_os_terminal',
+            height: 200,
+            prompt: '$ '
         });
     </script>
 </body>
