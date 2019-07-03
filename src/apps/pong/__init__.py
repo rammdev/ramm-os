@@ -1,5 +1,6 @@
 """Pong game."""
 import turtle
+from time import sleep
 
 WN = turtle.Screen()
 WN.title("Megapong")
@@ -118,3 +119,5 @@ while True:
             < PADDLE_A.ycor() + 40 and BALL.ycor() > PADDLE_A.ycor() - 40:
         BALL.setx(-340)
         BALL.dx *= -1
+
+    sleep(0.01)
