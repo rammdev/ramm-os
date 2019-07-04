@@ -1,27 +1,13 @@
-dist: xenial
+language: node_js
 
-matrix:
-  include:
-    - language: node_js
+node_js: lts/*
 
-      node_js: lts/*
+cache:
+  - npm
+  - yarn
 
-      cache:
-        - npm
-        - yarn
+before_install: npm i -g yarn
 
-      before_install: npm i -g yarn
+install: yarn install
 
-      install: yarn install
-
-      script: yarn lint
-
-    - language: python
-
-      python: 3.7
-
-      cache: pip
-
-      install: pip install pylint
-
-      script: find src -type f -name '__init__.py' | sed -r 's|/[^/]+$||' | sort | uniq | xargs pylint
+script: yarn lint
