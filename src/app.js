@@ -16,7 +16,7 @@ import isUrl from "is-url"
 
 import dirs from "./utils/data/dirs"
 
-Array.prototype.i = function (val) {
+Array.prototype.i = function(val) {
     if (val < 0) {
         return this[this.length - Math.abs(val)]
     }
@@ -31,8 +31,6 @@ import dayjs from "dayjs"
 //     cwd: path.join("ramm-os", "settings"),
 //     encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
 // })
-
-import isColour from "is-color"
 
 import requestjson from "./utils/requestjson"
 
@@ -61,7 +59,7 @@ window.onload = () => {
 
     // Fix the ripples of each icon button
     $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-        (_, { MDCRipple }) => (MDCRipple.unbounded = true)
+        (_, {MDCRipple}) => (MDCRipple.unbounded = true)
     )
 
     $(".action__close").click(() => mainWindow.close())
@@ -113,7 +111,7 @@ window.onload = () => {
 
     $(".install__dialog")
         .get(0)
-        .MDCDialog.listen("MDCDialog:closing", ({ detail }) => {
+        .MDCDialog.listen("MDCDialog:closing", ({detail}) => {
             // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
             if (detail.action === "install") {
                 if ($(".install__uri").get(0).MDCTextField.value === "") {
@@ -128,19 +126,19 @@ window.onload = () => {
                 if (protocol in ["http:", "https:"]) {
                     requestjson(uri)
                         .then((body) => installApp(body))
-                        .catch(({ message }) => snackBarMessage(`Something bad just happened. (${message})`))
+                        .catch(({message}) => snackBarMessage(`Something bad just happened. (${message})`))
                 } else if (protocol === "json:") {
                     installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
                 } else if (protocol === "file:") {
                     fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8")
                         .then((data) => installApp(JSON.parse(data)))
-                        .catch(({ message }) => snackBarMessage(
+                        .catch(({message}) => snackBarMessage(
                             `Something bad just happened. (${message})`
                         ))
                 } else {
                     fs.readFile(path.resolve(uri), "utf8")
                         .then((data) => installApp(JSON.parse(data)))
-                        .catch(({ message }) => snackBarMessage(
+                        .catch(({message}) => snackBarMessage(
                             `Something bad just happened. (${message})`
                         ))
                 }
@@ -154,7 +152,7 @@ window.onload = () => {
         console.warn("open-url", `You arrived from: ${url}`)
     })
 
-    $.fn.makeDraggable = function () {
+    $.fn.makeDraggable = function() {
         let pos1 = 0
         let pos2 = 0
         let pos3 = 0
@@ -188,28 +186,6 @@ window.onload = () => {
             document.onmouseup = null
             document.onmousemove = null
         }
-    }
-
-    const launchApp = (
-        { name, id, root, start, themecolour },
-        internal = false
-    ) => {
-        const el = $("<app-window>").attr({
-            "data-name": name,
-            "data-theme": themecolour
-        })
-        el.append(
-            $("<iframe>")
-                .attr({
-                    src: internal
-                        ? path.join(root, start)
-                        : path.resolve(dirs.store, "appdata", id, root || "", start),
-                    frameborder: 0
-                })
-                .addClass("resizable limit-size")
-        )
-
-        el.appendTo(".main__content")
     }
 
     $(".app__menu")

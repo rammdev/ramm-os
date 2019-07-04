@@ -2,6 +2,8 @@ import path from "path"
 
 import * as mdc from "material-components-web"
 
+import launchApp from "./launchApp"
+
 export default (conf, internal = false) => {
     const icon = (() => {
         if (!conf.icon) return "generic.svg"
