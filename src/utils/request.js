@@ -1,10 +1,10 @@
 import request from "request-promise"
 
-import version from "../../package.json"
+import userAgent from "./data/userAgent"
 
 export default request.defaults({
     gzip: true,
     headers: {
-        "User-Agent": `RAMM OS v${version}`
+        "User-Agent": userAgent
     },
 })
