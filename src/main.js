@@ -1,3 +1,6 @@
+import * as Sentry from "@sentry/electron"
+Sentry.init({dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690"})
+
 import {app, BrowserWindow} from "electron"
 
 require("update-electron-app")()
@@ -25,6 +28,8 @@ const createWindow = () => {
             nodeIntegrationInWorker: false,
             contextIsolation: false,
             preload: path.join(__dirname, "app-loader.js"),
+            webSecurity: false,
+            allowRunningInsecureContent: false
         },
         fullscreen: true,
         frame: false,

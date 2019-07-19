@@ -15,9 +15,11 @@
         "lint": "eslint src --color"
     },
     "dependencies": {
+        "@dependabot/yarn-lib": "^1.17.3",
+        "@sentry/electron": "^0.17.3",
         "auto-launch": "^5.0.5",
         "bluebird": "^3.5.5",
-        "dayjs": "^1.8.14",
+        "dayjs": "^1.8.15",
         "electron-squirrel-startup": "^1.0.0",
         "electron-store": "^4.0.0",
         "esm": "^3.2.25",
@@ -30,20 +32,21 @@
         "jquery": "^3.4.1",
         "material-components-web": "^3.0.0",
         "normalize.css": "^8.0.1",
+        "python-bridge": "^1.1.0",
         "request": "^2.88.0",
         "request-promise": "^4.2.4",
         "temp-dir": "^2.0.0",
-        "update-electron-app": "^1.4.2",
+        "update-electron-app": "^1.5.0",
         "vue": "^2.6.8",
         "vueify": "^9.4.1",
         "website-scraper": "^4.0.1"
     },
     "devDependencies": {
-        "@electron-forge/cli": "^6.0.0-beta.39",
-        "@electron-forge/maker-deb": "^6.0.0-beta.39",
-        "@electron-forge/maker-rpm": "^6.0.0-beta.39",
-        "@electron-forge/maker-squirrel": "^6.0.0-beta.39",
-        "@electron-forge/maker-zip": "^6.0.0-beta.39",
+        "@electron-forge/cli": "^6.0.0-beta.43",
+        "@electron-forge/maker-deb": "^6.0.0-beta.43",
+        "@electron-forge/maker-rpm": "^6.0.0-beta.43",
+        "@electron-forge/maker-squirrel": "^6.0.0-beta.43",
+        "@electron-forge/maker-zip": "^6.0.0-beta.43",
         "@types/bluebird": "^3.5.27",
         "@types/extract-zip": "^1.6.2",
         "@types/fs-extra": "^8.0.0",
@@ -52,14 +55,15 @@
         "@types/is-url": "^1.2.28",
         "@types/jquery": "^3.3.30",
         "@types/website-scraper": "^1.2.4",
-        "electron": "^5.0.6",
+        "electron": "^5.0.7",
         "eslint": "^6.0.1",
         "eslint-config-google": "^0.13.0",
-        "eslint-plugin-import": "^2.18.0",
+        "eslint-plugin-import": "^2.18.1",
         "eslint-plugin-vue": "^5.2.3"
     },
     "resolutions": {
-        "js-yaml": "^3.13.1"
+        "vueify/cssnano/postcss-svgo/svgo/js-yaml": "^3.13.1",
+        "@dependabot/yarn-lib/micromatch/braces": "^2.3.1"
     },
     "config": {
         "forge": {

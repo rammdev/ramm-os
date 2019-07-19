@@ -1,36 +1,23 @@
-// setImmediate Polyfill
-const _setImmediate = setImmediate
-process.once("loaded", () => (global.setImmediate = _setImmediate))
+import * as Sentry from "@sentry/electron"
+Sentry.init({dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690"})
 
-import electron from "electron"
+import {remote} from "electron"
 
-const mainWindow = electron.remote.getCurrentWindow()
-const eapp = electron.remote.app
+const mainWindow = remote.getCurrentWindow()
+const eapp = remote.app
+
+import path from "path"
 
 // import Vue from "vue/dist/vue.min.js"
 // Vue.config.productionTip = false
-
-import path from "path"
 
 import isUrl from "is-url"
 
 import dirs from "./utils/data/dirs"
 
-Array.prototype.i = function(val) {
-    if (val < 0) {
-        return this[this.length - Math.abs(val)]
-    }
-    return this[val]
-}
-
 import fs from "./utils/fs"
 
 import dayjs from "dayjs"
-
-// const db = new Store({
-//     cwd: path.join("ramm-os", "settings"),
-//     encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
-// })
 
 import requestjson from "./utils/requestjson"
 
@@ -227,7 +214,7 @@ window.onload = () => {
             name: "Terminal",
             source: "",
             root: "apps/terminal",
-            // icon: "resources/icon-48x48.png",
+            icon: "icon.svg",
             start: "index.html",
             themecolour: "#4285f4"
         },

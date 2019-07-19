@@ -2,7 +2,33 @@ import * as mdc from "material-components-web"
 
 import isColour from "is-color"
 
+import fs from "../utils/fs"
+
+import path from "path"
+
+const html = fs.readFileSync(path.join(__dirname, "app.html"), "utf8")
+
+import Store from "electron-store"
+
+const perms = new Store({
+    cwd: path.join("ramm-os", "perms"),
+    encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
+})
+
+const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
+    writable: false,
+    configurable: false,
+    enumerable: true,
+    value
+})
+
+/**
+* App Window.
+*/
 class AppWindow extends HTMLElement {
+    /**
+    * Constructor.
+    */
     constructor() {
         super()
 
@@ -11,90 +37,7 @@ class AppWindow extends HTMLElement {
         const el = $(eln)
         const host = $(eln.host)
 
-        el.prepend(`
-            <link rel="stylesheet" href="..\\node_modules\\material-components-web\\dist\\material-components-web.min.css">
-            <style>
-                .app__container {
-                    position: absolute;
-                    background-color: white;
-                    resize: both;
-                }
-
-                .limit-size {
-                    min-width: 200px;
-                    min-height: 200px;
-                }
-
-                .app__drawer {
-                    z-index: 6;
-                }
-
-                .app__header {
-                    z-index: 0;
-                    position: absolute;
-                    top: 0;
-                    min-width: 200px;
-                }
-
-                .resizable {
-                    resize: both;
-                }
-
-                ::-webkit-scrollbar {
-                  border-radius: 100px;
-                  background-color: transparent;
-                  width: 8px;
-                  height: 8px;
-                }
-
-                ::-webkit-scrollbar-button {
-                  height: 0;
-                  width: 0;
-                }
-
-                ::-webkit-scrollbar-corner {
-                  background-color: transparent;
-                }
-
-                ::-webkit-scrollbar-thumb {
-                  border-radius: 100px;
-                  background-color: rgba(0, 0, 0, 0.2);
-                  min-height: 28px;
-                }
-
-                ::-webkit-scrollbar-thumb:hover {
-                  background-color: rgba(0, 0, 0, 0.4);
-                }
-
-                ::-webkit-scrollbar-thumb:active {
-                  background-color: rgba(0, 0, 0, 0.5);
-                }
-
-                ::-webkit-scrollbar-track {
-                  background-clip: padding-box;
-                  border-width: 0 0 0 4px;
-                }
-            </style>
-            <div class="limit-size app__container mdc-elevation--z8">
-            <header class="app__header mdc-top-app-bar mdc-top-app-bar--dense">
-                <div class="mdc-top-app-bar__row">
-                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                        <span class="mdc-top-app-bar__title">App</span> </section>
-                    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-                        <button class="app__close mdc-icon-button mdc-top-app-bar__action-item--unbounded" title="Search" data-mdc-auto-init="MDCRipple">
-                            <svg class="mdc-icon-button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="none" d="M0 0h24v24H0V0z"/>
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-                            </svg>
-                        </button>
-                    </section>
-                </div>
-            </header>
-            <div class="mdc-top-app-bar--dense-fixed-adjust"></div>
-            <div class="app__content"></div>
-            </div>
-            <script src="..\\node_modules\\material-components-web\\dist\\material-components-web.min.js"></script>
-        `)
+        el.prepend(html)
 
         $(this).ready(() => {
             $(eln.host.innerHTML).appendTo(el.find(".app__content"))
@@ -135,6 +78,18 @@ class AppWindow extends HTMLElement {
             const width = $(window).width() * 0.6
             el.find(".app__header, .app__container, .resizable").css("width", width)
             el.find(".app__content, .resizable").css("height", height)
+            window.a = el.find("iframe").get(0)
+            const contentWindow = el.find("iframe").get(0).contentWindow
+            defineReadOnly(contentWindow, "require", (name) => {
+                if (Boolean(perms.get(host.attr("data-id")))) return require(name)
+                // TODO: Implement permission request and auto installation
+                throw new Error("Not implemented!")
+            })
+            defineReadOnly(contentWindow, "checkForRequire", () => Boolean(perms.get(host.attr("data-id"))))
+            defineReadOnly(contentWindow, "askForRequire", () => {
+                // TODO: Implement same permission request then change perm value
+                throw new Error("Not implemented!")
+            })
         })
     }
 }
