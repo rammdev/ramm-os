@@ -12,6 +12,7 @@ import urlExists from "../utils/url-exists"
 import scrape from "website-scraper"
 
 import Store from "electron-store"
+
 const appsdb = new Store({
     cwd: path.join("ramm-os", "apps"),
     encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ"
@@ -20,6 +21,8 @@ const appsdb = new Store({
 import isUrl from "is-url"
 
 import loadApp from "./loadApp"
+
+import yarn from "../utils/yarn"
 
 export default (conf, {alert = true, internal = false} = {}) => {
     if (isUrl(conf)) {
@@ -73,12 +76,8 @@ export default (conf, {alert = true, internal = false} = {}) => {
             }
         })
     } else {
-        if (conf.type !== "ramm-app") {
-            return
-        }
-        if (conf.spec !== 0) {
-            return
-        }
+        if (conf.type !== "ramm-app") return
+        if (conf.spec !== 0) return
         if (appsdb.has(conf.id)) {
             if (alert) snackBarMessage("App already installed!")
             loadApp(conf, internal)
@@ -86,7 +85,8 @@ export default (conf, {alert = true, internal = false} = {}) => {
         }
         if (internal) {
             appsdb.set(conf.id, conf)
-            loadApp(conf, internal)
+            if (conf.elevated && conf.dependencies) yarn.apply(null, ["add", ...Object.entries(conf.dependencies).map((val) => `${val[0]}@${val[1]}`)]).finally(() => loadApp(conf, internal))
+            else loadApp(conf, internal)
         } else {
             const filename = `${conf.id}.${conf.source.split(".").i(-1)}`
             request(conf.source, (err, _res, _body) => {
@@ -99,7 +99,8 @@ export default (conf, {alert = true, internal = false} = {}) => {
                     if (err) snackBarMessage(`Something bad just happened. (${err.message})`)
                 })
                 appsdb.set(conf.id, conf)
-                loadApp(conf, internal)
+                if (conf.elevated && conf.dependencies) yarn.apply(null, ["add", ...Object.entries(conf.dependencies).map((val) => `${val[0]}@${val[1]}`)]).finally(() => loadApp(conf, internal))
+                else loadApp(conf, internal)
                 if (alert) snackBarMessage(`Finished installing ${conf.name}.`, 0.1)
             }).pipe(fs.createWriteStream(path.join(dirs.temp, filename)))
         }

@@ -10,9 +10,9 @@ const html = fs.readFileSync(path.join(__dirname, "app.html"), "utf8")
 
 import Store from "electron-store"
 
-const perms = new Store({
-    cwd: path.join("ramm-os", "perms"),
-    encryptionKey: "jRZgcRQztwgPUAFEFpYVLsIXyHVnWbaS",
+const appsdb = new Store({
+    cwd: path.join("ramm-os", "apps"),
+    encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ"
 })
 
 const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
@@ -78,18 +78,14 @@ class AppWindow extends HTMLElement {
             const width = $(window).width() * 0.6
             el.find(".app__header, .app__container, .resizable").css("width", width)
             el.find(".app__content, .resizable").css("height", height)
-            window.a = el.find("iframe").get(0)
+
             const contentWindow = el.find("iframe").get(0).contentWindow
+            const elevated = Boolean(appsdb.get(host.attr("data-id")).elevated)
             defineReadOnly(contentWindow, "require", (name) => {
-                if (Boolean(perms.get(host.attr("data-id")))) return require(name)
-                // TODO: Implement permission request and auto installation
-                throw new Error("Not implemented!")
+                if (elevated) return require(name)
+                throw new Error("Application not elevated!")
             })
-            defineReadOnly(contentWindow, "checkForRequire", () => Boolean(perms.get(host.attr("data-id"))))
-            defineReadOnly(contentWindow, "askForRequire", () => {
-                // TODO: Implement same permission request then change perm value
-                throw new Error("Not implemented!")
-            })
+            defineReadOnly(contentWindow, "isElevated", () => elevated)
         })
     }
 }
