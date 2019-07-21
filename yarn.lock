@@ -2125,6 +2125,11 @@ es-abstract@^1.12.0, es-abstract@^1.5.1, es-abstract@^1.7.0:
     is-regex "^1.0.4"
     object-keys "^1.0.12"
 
+es-module-loader@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/es-module-loader/-/es-module-loader-2.3.0.tgz#e20835fc6ad0bf42e459fb8dd0a17b596e1a0127"
+  integrity sha512-iuw5FdVMYA5d7CWCpGL3NcmRD2kWLGTNUds+vdcRuDWjnEsird1K7pSD9PXmvOU/B8sb4by12/9MFZD2hwXdAQ==
+
 es-to-primitive@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/es-to-primitive/-/es-to-primitive-1.2.0.tgz#edf72478033456e8dda8ef09e00ad9650707f377"

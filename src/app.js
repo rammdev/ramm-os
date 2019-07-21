@@ -216,7 +216,11 @@ window.onload = () => {
             root: "apps/terminal",
             icon: "icon.svg",
             start: "index.html",
-            themecolour: "#4285f4"
+            themecolour: "#4285f4",
+            elevated: true,
+            dependencies: {
+                "python-bridge": "^1.1.0"
+            }
         },
         {
             alert: false,

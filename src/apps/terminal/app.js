@@ -56,6 +56,4 @@ $("#terminal").terminal((command, term) => {
     prompt: "$ "
 })
 
-window.onmessage = ({data}) => {
-    if (data.type === "addCommand") window[data.name] = data.script
-}
+window.python = require("./python")

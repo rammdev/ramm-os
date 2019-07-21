@@ -22,6 +22,8 @@ const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
     value
 })
 
+import esImport from "../utils/es-import"
+
 /**
 * App Window.
 */
@@ -32,7 +34,7 @@ class AppWindow extends HTMLElement {
     constructor() {
         super()
 
-        const eln = this.attachShadow({mode: "open"})
+        const eln = this.attachShadow({ mode: "open" })
 
         const el = $(eln)
         const host = $(eln.host)
@@ -54,7 +56,7 @@ class AppWindow extends HTMLElement {
             }
 
             new ResizeObserver((entries) => {
-                entries.forEach(({contentRect}) => {
+                entries.forEach(({ contentRect }) => {
                     el.find(".app__header, .app__container").css(
                         "width",
                         contentRect.width
@@ -69,7 +71,7 @@ class AppWindow extends HTMLElement {
             })
             mdc.autoInit(el.get(0))
             el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-                (_, {MDCRipple}) => (MDCRipple.unbounded = true)
+                (_, { MDCRipple }) => (MDCRipple.unbounded = true)
             )
 
             el.find(".app__close").click(() => host.remove())
@@ -80,12 +82,10 @@ class AppWindow extends HTMLElement {
             el.find(".app__content, .resizable").css("height", height)
 
             const contentWindow = el.find("iframe").get(0).contentWindow
-            const elevated = Boolean(appsdb.get(host.attr("data-id")).elevated)
-            defineReadOnly(contentWindow, "require", (name) => {
-                if (elevated) return require(name)
-                throw new Error("Application not elevated!")
-            })
-            defineReadOnly(contentWindow, "isElevated", () => elevated)
+            if (appsdb.get(host.attr("data-id")).elevated) {
+                defineReadOnly(contentWindow, "require", (name) => require(name))
+                defineReadOnly(contentWindow, "import", (name) => esImport(name))
+            }
         })
     }
 }
