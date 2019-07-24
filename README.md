@@ -26,9 +26,10 @@ You can also specify a packages field that acts like a `package.json` dependenci
 
 ```json
 {
-    "packages": {
+    "elevated": true,
+    "dependencies": {
         "bluebird": "^3.5.5",
-        "dayjs": "^1.8.14"
+        "dayjs": "^1.8.15"
     }
 }
 ```
