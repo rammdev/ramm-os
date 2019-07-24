@@ -30,6 +30,7 @@
         "is-color": "^1.0.2",
         "is-url": "^1.2.4",
         "jquery": "^3.4.1",
+        "jquery.terminal": "^2.6.3",
         "material-components-web": "^3.0.0",
         "normalize.css": "^8.0.1",
         "python-bridge": "^1.1.0",

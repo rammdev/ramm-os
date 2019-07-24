@@ -1,31 +1,18 @@
-function realType(myVar) {
-    const argLength = arguments.length
-
-    // validate arguments
-    if (argLength !== 1) {
-        throw new Error(`Expected 1 arguments, got ${argLength}`)
-    }
-
-    return ({})
-        .toString
-        .call(myVar)
-        .match(/\s([a-zA-Z]+)/)[1]
-        .toLowerCase()
-};
+const realType = (val) => Object.getPrototypeOf(val).constructor.name.toLowerCase()
 
 function recur(obj) {
     const result = {}
-    let _tmp
+    let temp
     for (const i in obj) {
         // enabledPlugin is too nested, also skip functions
         if (i === "enabledPlugin" || typeof obj[i] === "function") {
             continue
         } else if (typeof obj[i] === "object") {
             // get props recursively
-            _tmp = recur(obj[i])
+            temp = recur(obj[i])
             // if object is not {}
-            if (Object.keys(_tmp).length) {
-                result[i] = _tmp
+            if (Object.keys(temp).length) {
+                result[i] = temp
             }
         } else {
             // string, number or boolean
@@ -35,7 +22,7 @@ function recur(obj) {
     return result
 }
 
-$("#terminal").terminal((command, term) => {
+$(".terminal").terminal((command, term) => {
     term.pause()
     if (command !== "") {
         try {

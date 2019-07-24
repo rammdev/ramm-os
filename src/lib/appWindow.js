@@ -24,6 +24,8 @@ const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
 
 import esImport from "../utils/es-import"
 
+const depAllowed = (id, name) => name.startsWith(".") || Object.keys(appsdb.get(id).dependencies).includes(name)
+
 /**
 * App Window.
 */
@@ -83,8 +85,14 @@ class AppWindow extends HTMLElement {
 
             const contentWindow = el.find("iframe").get(0).contentWindow
             if (appsdb.get(host.attr("data-id")).elevated) {
-                defineReadOnly(contentWindow, "require", (name) => require(name))
-                defineReadOnly(contentWindow, "import", (name) => esImport(name))
+                defineReadOnly(contentWindow, "require", (name) => {
+                    if (depAllowed(host.attr("data-id"), name)) return require(name)
+                    else throw new Error("Not allowed to access dependency!")
+                })
+                defineReadOnly(contentWindow, "import", (name) => {
+                    if (depAllowed(host.attr("data-id"), name)) return esImport(name)
+                    else throw new Error("Not allowed to access dependency!")
+                })
             }
         })
     }

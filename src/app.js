@@ -30,6 +30,13 @@ import snackBarMessage from "./lib/snackBarMessage"
 
 import installApp from "./lib/installApp"
 
+import Store from "electron-store"
+
+const appsdb = new Store({
+    cwd: path.join("ramm-os", "apps"),
+    encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ"
+})
+
 import AppWindow from "./lib/appWindow"
 
 customElements.define("app-window", AppWindow)
@@ -188,6 +195,10 @@ window.onload = () => {
         return false
     })
 
+    // TODO: Move functions to developer options and allow enabling of developer mode from about.
+    window.wipeAppData = (name) => appsdb.delete(name)
+    window.wipeAllApps = () => appsdb.clear()
+
     installApp(
         {
             type: "ramm-app",
@@ -219,8 +230,30 @@ window.onload = () => {
             themecolour: "#4285f4",
             elevated: true,
             dependencies: {
+                "jquery": "^3.4.1",
+                "jquery.terminal": "^3.6.3",
+                "normalize.css": "^8.0.1",
                 "python-bridge": "^1.1.0"
             }
+        },
+        {
+            alert: false,
+            internal: true
+        }
+    )
+    window.require = require
+    installApp(
+        {
+            type: "ramm-app",
+            spec: 0,
+            id: "about",
+            name: "About",
+            source: "",
+            root: "apps/about",
+            icon: "icon.svg",
+            start: "index.html",
+            themecolour: "#4285f4",
+            elevated: true
         },
         {
             alert: false,
