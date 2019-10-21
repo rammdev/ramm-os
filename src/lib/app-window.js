@@ -12,14 +12,14 @@ import Store from "electron-store"
 
 const appsdb = new Store({
     cwd: path.join("ramm-os", "apps"),
-    encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ"
+    encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ",
 })
 
 const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
     writable: false,
     configurable: false,
     enumerable: true,
-    value
+    value,
 })
 
 import esImport from "../utils/es-import"
@@ -36,7 +36,7 @@ class AppWindow extends HTMLElement {
     constructor() {
         super()
 
-        const eln = this.attachShadow({mode: "open"})
+        const eln = this.attachShadow({ mode: "open" })
 
         const el = $(eln)
         const host = $(eln.host)
@@ -58,7 +58,7 @@ class AppWindow extends HTMLElement {
             }
 
             new ResizeObserver((entries) => {
-                entries.forEach(({contentRect}) => {
+                entries.forEach(({ contentRect }) => {
                     el.find(".app__header, .app__container").css(
                         "width",
                         contentRect.width
@@ -73,7 +73,7 @@ class AppWindow extends HTMLElement {
             })
             mdc.autoInit(el.get(0))
             el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-                (_, {MDCRipple}) => (MDCRipple.unbounded = true)
+                (_, { MDCRipple }) => (MDCRipple.unbounded = true)
             )
 
             el.find(".app__close").click(() => host.remove())

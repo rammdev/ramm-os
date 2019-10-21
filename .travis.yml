@@ -3,11 +3,13 @@ language: node_js
 node_js: lts/*
 
 cache:
-  - npm
-  - yarn
+    - npm
+    - yarn
 
 before_install: npm i -g yarn
 
 install: yarn install
 
-script: yarn lint
+script:
+    - yarn lint
+    - yarn package

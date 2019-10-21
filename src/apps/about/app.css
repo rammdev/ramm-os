@@ -2,7 +2,17 @@ body {
     font-family: "Roboto", sans-serif;
 }
 
+.waves-effect {
+    display: block;
+}
+
+.version__container {
+    text-align: center;
+}
+
 .logo {
+    display: block;
+    margin: auto;
     height: 256px;
     width: 256px;
 }

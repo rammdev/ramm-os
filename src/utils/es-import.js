@@ -1,4 +1,4 @@
-import {Loader} from "es-module-loader/core/loader-polyfill"
+import { Loader } from "es-module-loader/core/loader-polyfill"
 const loader = new Loader()
 
 import Promise from "bluebird"

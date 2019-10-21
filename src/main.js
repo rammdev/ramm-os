@@ -1,7 +1,9 @@
 import * as Sentry from "@sentry/electron"
-Sentry.init({dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690"})
+Sentry.init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
 
-import {app, BrowserWindow} from "electron"
+import { app, BrowserWindow } from "electron"
+
+import isDev from "electron-is-dev"
 
 require("update-electron-app")()
 
@@ -29,7 +31,7 @@ const createWindow = () => {
             contextIsolation: false,
             preload: path.join(__dirname, "app-loader.js"),
             webSecurity: false,
-            allowRunningInsecureContent: false
+            allowRunningInsecureContent: false,
         },
         fullscreen: true,
         frame: false,
@@ -42,13 +44,13 @@ const createWindow = () => {
     mainWindow.loadURL(path.join(__dirname, "index.html"))
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    if (isDev) mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on("closed", () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
         mainWindow = null
     })
 }

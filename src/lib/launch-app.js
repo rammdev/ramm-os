@@ -1,21 +1,23 @@
 import path from "path"
 
+import dirs from "../utils/data/dirs"
+
 export default (
-    {name, id, root, start, themecolour},
+    { name, id, root, start, themecolour },
     internal = false
 ) => {
     const el = $("<app-window>").attr({
         "data-name": name,
         "data-theme": themecolour,
-        "data-id": id
+        "data-id": id,
     })
 
     const iframe = $("<iframe>")
         .attr({
-            src: internal
-                ? path.join(root, start)
-                : path.resolve(dirs.store, "appdata", id, root || "", start),
-            frameborder: 0
+            src: internal ?
+                path.join(root, start) :
+                path.resolve(dirs.store, "appdata", id, root || "", start),
+            frameborder: 0,
         })
         .addClass("resizable limit-size")
 

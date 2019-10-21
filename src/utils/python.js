@@ -4,14 +4,9 @@ import path from "path"
 
 import fs from "./fs"
 
-import Promise from "bluebird"
-
-export default (filepath) => new Promise((resolve, reject) => {
-    const python = pythonBridge({cwd: path.basename(path.dirname(filepath))})
-    fs.readFile(filepath, "utf8")
-        .then((data) => python.ex(data)
-            .then(resolve)
-            .catch(reject))
-        .catch(reject)
+export default (filepath) => {
+    const python = pythonBridge({ cwd: path.basename(path.dirname(filepath)) })
+    return fs.readFile(filepath, "utf8")
+        .then((data) => python.ex(data))
         .finally(() => python.end())
-})
+}

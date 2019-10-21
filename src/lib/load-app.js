@@ -2,7 +2,9 @@ import path from "path"
 
 import * as mdc from "material-components-web"
 
-import launchApp from "./launchApp"
+import launchApp from "./launch-app"
+
+import dirs from "../utils/data/dirs"
 
 export default (conf, internal = false) => {
     const icon = (() => {
@@ -28,6 +30,6 @@ export default (conf, internal = false) => {
     $(".drawer__user").append(el)
     mdc.autoInit(el.get(0))
     el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-        (_, {MDCRipple}) => (MDCRipple.unbounded = true)
+        (_, { MDCRipple }) => (MDCRipple.unbounded = true)
     )
 }

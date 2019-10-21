@@ -3,7 +3,7 @@ import request from "./request"
 
 export default (url) => new Promise((resolve, reject) => {
     request.head(url)
-        .on("response", ({statusCode}) =>
+        .on("response", ({ statusCode }) =>
             resolve(statusCode.toString()[0] === "2")
         )
         .on("error", (err) => reject(err))

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Welcome to your Workbox-powered service worker!
  *
@@ -94,3 +95,4 @@ self.__precacheManifest = [
 ].concat(self.__precacheManifest || [])
 workbox.precaching.suppressWarnings()
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {})
+/* eslint-enable no-undef */

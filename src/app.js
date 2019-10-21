@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/electron"
-Sentry.init({dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690"})
+Sentry.init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
 
-import {remote} from "electron"
+import { remote } from "electron"
 
 const mainWindow = remote.getCurrentWindow()
 const eapp = remote.app
@@ -26,22 +26,21 @@ fs.ensureDir(dirs.store)
 
 import * as mdc from "material-components-web"
 
-import snackBarMessage from "./lib/snackBarMessage"
-
-import installApp from "./lib/installApp"
+import installApp from "./lib/install-app"
 
 import Store from "electron-store"
 
 const appsdb = new Store({
     cwd: path.join("ramm-os", "apps"),
-    encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ"
+    encryptionKey: "PcdYdENvsstlnBxOxdYAwwrKQgQrSDkJ",
 })
 
-import AppWindow from "./lib/appWindow"
+import AppWindow from "./lib/app-window"
+import handleError from "./lib/handle-error"
 
 customElements.define("app-window", AppWindow)
 
-window.onload = () => {
+window.addEventListener("load", () => {
     window.$ = require("jquery")
 
     // Define Vue app
@@ -53,7 +52,7 @@ window.onload = () => {
 
     // Fix the ripples of each icon button
     $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-        (_, {MDCRipple}) => (MDCRipple.unbounded = true)
+        (_, { MDCRipple }) => (MDCRipple.unbounded = true)
     )
 
     $(".action__close").click(() => mainWindow.close())
@@ -105,7 +104,7 @@ window.onload = () => {
 
     $(".install__dialog")
         .get(0)
-        .MDCDialog.listen("MDCDialog:closing", ({detail}) => {
+        .MDCDialog.listen("MDCDialog:closing", ({ detail }) => {
             // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
             if (detail.action === "install") {
                 if ($(".install__uri").get(0).MDCTextField.value === "") {
@@ -120,21 +119,17 @@ window.onload = () => {
                 if (protocol in ["http:", "https:"]) {
                     requestjson(uri)
                         .then((body) => installApp(body))
-                        .catch(({message}) => snackBarMessage(`Something bad just happened. (${message})`))
+                        .catch(handleError)
                 } else if (protocol === "json:") {
                     installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
                 } else if (protocol === "file:") {
                     fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8")
                         .then((data) => installApp(JSON.parse(data)))
-                        .catch(({message}) => snackBarMessage(
-                            `Something bad just happened. (${message})`
-                        ))
+                        .catch(handleError)
                 } else {
                     fs.readFile(path.resolve(uri), "utf8")
                         .then((data) => installApp(JSON.parse(data)))
-                        .catch(({message}) => snackBarMessage(
-                            `Something bad just happened. (${message})`
-                        ))
+                        .catch(handleError)
                 }
                 $(".install__uri").get(0).MDCTextField.value = ""
             }
@@ -156,8 +151,8 @@ window.onload = () => {
             e.preventDefault()
             pos3 = e.clientX
             pos4 = e.clientY
-            document.onmouseup = closeDragElement
-            document.onmousemove = elementDrag
+            $(document).on("mouseup", closeDragElement)
+            $(document).on("mousemove", elementDrag)
         }
 
         this.find("header").on("mousedown", dragMouseDown)
@@ -172,13 +167,13 @@ window.onload = () => {
             const vals = el.offset()
             el.css({
                 top: `${vals.top - pos2}px`,
-                left: `${vals.left - pos1}px`
+                left: `${vals.left - pos1}px`,
             })
         }
 
         const closeDragElement = () => {
-            document.onmouseup = null
-            document.onmousemove = null
+            $(document).off("mouseup", closeDragElement)
+            $(document).off("mousemove", elementDrag)
         }
     }
 
@@ -209,11 +204,11 @@ window.onload = () => {
             root: "apps/ros-calculator",
             icon: "resources/icon-48x48.png",
             start: "index.html",
-            themecolour: "#4285f4"
+            themecolour: "#4285f4",
         },
         {
             alert: false,
-            internal: true
+            internal: true,
         }
     )
 
@@ -233,12 +228,12 @@ window.onload = () => {
                 "jquery": "^3.4.1",
                 "jquery.terminal": "^3.6.3",
                 "normalize.css": "^8.0.1",
-                "python-bridge": "^1.1.0"
-            }
+                "python-bridge": "^1.1.0",
+            },
         },
         {
             alert: false,
-            internal: true
+            internal: true,
         }
     )
     window.require = require
@@ -253,11 +248,11 @@ window.onload = () => {
             icon: "icon.svg",
             start: "index.html",
             themecolour: "#4285f4",
-            elevated: true
+            elevated: true,
         },
         {
             alert: false,
-            internal: true
+            internal: true,
         }
     )
-}
+})

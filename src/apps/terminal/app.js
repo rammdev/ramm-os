@@ -1,5 +1,7 @@
 const realType = (val) => Object.getPrototypeOf(val).constructor.name.toLowerCase()
 
+const isObject = (value) => value !== null && (typeof value === "object" || typeof value === "function")
+
 function recur(obj) {
     const result = {}
     let temp
@@ -11,7 +13,7 @@ function recur(obj) {
             // get props recursively
             temp = recur(obj[i])
             // if object is not {}
-            if (Object.keys(temp).length) {
+            if (isObject(temp) && temp !== {}) {
                 result[i] = temp
             }
         } else {
@@ -40,7 +42,7 @@ $(".terminal").terminal((command, term) => {
     greetings: "RAMM OS Terminal",
     name: "ramm_os_terminal",
     height: 200,
-    prompt: "$ "
+    prompt: "$ ",
 })
 
-window.python = require("./python")
+window.python = require("./python") // eslint-disable-line node/no-missing-require
