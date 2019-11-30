@@ -1,17 +1,16 @@
 import * as Sentry from "@sentry/electron"
 Sentry.init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
 
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow } from "electron" // eslint-disable-line import/order
 
 import isDev from "electron-is-dev"
 
 require("update-electron-app")()
 
-import path from "path"
+import path from "path" // eslint-disable-line import/order
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
-    // eslint-disable-line global-require
     app.quit()
 }
 
@@ -40,7 +39,7 @@ const createWindow = () => {
 
     mainWindow.once("ready-to-show", () => mainWindow.show())
 
-    // and load the index.html of the app.
+    // And load the index.html of the app.
     mainWindow.loadURL(path.join(__dirname, "index.html"))
 
     // Open the DevTools.

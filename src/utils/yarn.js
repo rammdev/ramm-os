@@ -1,4 +1,6 @@
 import Promise from "bluebird"
 import yarn from "yarn-api"
 
-export default Promise.promisifyAll(yarn)
+const yarnPromise = Promise.promisify(yarn)
+
+export default (...args) => yarnPromise(args)

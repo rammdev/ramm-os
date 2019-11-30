@@ -1,5 +1,5 @@
 {
-    "name": "@rammdev/os",
+    "name": "ramm-os",
     "productName": "RAMM OS",
     "version": "1.0.0",
     "description": "This is RAMM OS.",
@@ -12,34 +12,35 @@
         "package": "electron-forge package",
         "make": "electron-forge make",
         "publish": "electron-forge publish",
-        "lint": "eslint src"
+        "lint": "xo"
     },
     "dependencies": {
         "@sentry/electron": "^0.17.4",
         "auto-launch": "^5.0.5",
         "bluebird": "^3.7.1",
-        "braces": "^3.0.2",
         "dayjs": "^1.8.16",
+        "download": "^7.1.0",
         "electron-is-dev": "^1.1.0",
         "electron-squirrel-startup": "^1.0.0",
         "electron-store": "^5.0.0",
+        "ergent": "^1.0.1",
         "es-module-loader": "^2.3.0",
         "esm": "^3.2.25",
-        "extract-zip": "^1.6.7",
         "fs-extra": "^8.1.0",
-        "graceful-fs": "^4.2.2",
+        "get-url-title": "^1.0.0",
+        "got": "^9.6.0",
         "http-vue-loader": "^1.4.1",
         "is-color": "^1.0.2",
-        "is-url": "^1.2.4",
+        "is-url-superb": "^3.0.0",
         "jquery": "^3.4.1",
         "jquery.terminal": "^2.8.0",
+        "lodash": "^4.17.15",
         "material-components-web": "^3.2.0",
         "normalize.css": "^8.0.1",
+        "pkg-temp": "^1.1.1",
         "python-bridge": "^1.1.0",
-        "request": "^2.88.0",
-        "request-promise": "^4.2.4",
-        "temp-dir": "^2.0.0",
         "update-electron-app": "^1.5.0",
+        "url-exist": "^1.0.0",
         "url-join": "^4.0.1",
         "vue": "^2.6.8",
         "vueify": "^9.4.1",
@@ -52,22 +53,49 @@
         "@electron-forge/maker-rpm": "^6.0.0-beta.45",
         "@electron-forge/maker-squirrel": "^6.0.0-beta.45",
         "@electron-forge/maker-zip": "^6.0.0-beta.45",
-        "@types/bluebird": "^3.5.28",
-        "@types/extract-zip": "^1.6.2",
-        "@types/fs-extra": "^8.0.1",
-        "@types/graceful-fs": "^4.1.3",
-        "@types/is-color": "^1.0.0",
-        "@types/is-url": "^1.2.28",
-        "@types/jquery": "^3.3.31",
-        "@types/website-scraper": "^1.2.4",
         "electron": "^6.0.12",
-        "eslint": "^6.5.1",
         "eslint-config-richienb": "^0.2.0",
-        "eslint-plugin-vue": "^5.2.3"
+        "eslint-plugin-vue": "^5.2.3",
+        "xo": "^0.25.3"
     },
     "resolutions": {
         "vueify/cssnano/postcss-svgo/svgo/js-yaml": "^3.13.1",
-        "@dependabot/yarn-lib/micromatch/braces": "^2.3.1"
+        "eslint": "6.6.0"
+    },
+    "engines": {
+        "node": ">=10"
+    },
+    "keywords": [],
+    "repository": "https://github.com/rammdev/ramm-os.git",
+    "author": "Richie Bendall <richiebendall@gmail.com>",
+    "license": "MIT",
+    "xo": {
+        "extends": "richienb",
+        "env": [
+            "jquery"
+        ],
+        "plugins": [
+            "vue"
+        ],
+        "rules": {
+            "node/no-unpublished-import": [
+                "error",
+                {
+                    "allowModules": [
+                        "electron"
+                    ]
+                }
+            ],
+            "no-global-assign": [
+                "error",
+                {
+                    "exceptions": [
+                        "require"
+                    ]
+                }
+            ],
+            "no-use-extend-native/no-use-extend-native": 0
+        }
     },
     "config": {
         "forge": {
@@ -95,15 +123,5 @@
                 }
             ]
         }
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "engines": {
-        "node": ">=10"
-    },
-    "keywords": [],
-    "repository": "https://github.com/rammdev/ramm-os.git",
-    "author": "Richie Bendall <richiebendall@gmail.com>",
-    "license": "MIT"
+    }
 }

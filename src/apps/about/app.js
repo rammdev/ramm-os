@@ -1,4 +1,4 @@
-const version = require("../../package.json").version // eslint-disable-line node/no-missing-require
+const { version } = require("../../package.json") // eslint-disable-line node/no-missing-require
 
 /* eslint-disable no-undef */
 Waves.init()
@@ -14,6 +14,6 @@ setInterval(() => {
 
 document.querySelector(".logo").addEventListener("click", () => {
     clicks++
-    if (clicks === 10) alert("You are now a developer!")
+    if (clicks === 10) document.querySelector(".text").textContent = "You are now a developer!"
     // TODO: Only show developer mode if developer mode activated.
 })

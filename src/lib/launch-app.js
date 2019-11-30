@@ -4,7 +4,7 @@ import dirs from "../utils/data/dirs"
 
 export default (
     { name, id, root, start, themecolour },
-    internal = false
+    internal = false,
 ) => {
     const el = $("<app-window>").attr({
         "data-name": name,

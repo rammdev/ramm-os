@@ -1,12 +1,12 @@
 import path from "path"
 
-import tempDir from "temp-dir"
 import { remote } from "electron"
+import temp from "pkg-temp"
 
 export default {
-    temp: path.join(tempDir, "ramm-os"), // Temporary directory
+    temp, // Temporary directory
     store: path.join(
         remote.app.getPath("appData"),
-        "ramm-os"
+        "ramm-os",
     ), // Storage directory
 }

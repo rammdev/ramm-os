@@ -1,2 +1,2 @@
 require = require("esm")(module)
-require("./main")
+require("./main") // eslint-disable-line import/no-unassigned-import

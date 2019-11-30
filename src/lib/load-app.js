@@ -2,15 +2,15 @@ import path from "path"
 
 import * as mdc from "material-components-web"
 
+import dirs from "../utils/data/dirs"
 import launchApp from "./launch-app"
 
-import dirs from "../utils/data/dirs"
 
 export default (conf, internal = false) => {
     const icon = (() => {
         if (!conf.icon) return "generic.svg"
         if (internal) return path.join(conf.root, conf.icon)
-        else path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon)
+        path.join(dirs.store, "appdata", conf.id, conf.root, conf.icon)
     })()
     const el = $(
         `
@@ -24,12 +24,12 @@ export default (conf, internal = false) => {
     conf.name
 }</p>
             </div>
-        `
+        `,
     )
     el.find(".drawer__icon").click(() => launchApp(conf, internal))
     $(".drawer__user").append(el)
     mdc.autoInit(el.get(0))
-    el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-        (_, { MDCRipple }) => (MDCRipple.unbounded = true)
-    )
+    el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each((_, { MDCRipple }) => {
+        MDCRipple.unbounded = true
+    })
 }

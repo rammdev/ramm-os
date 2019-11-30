@@ -1,10 +1,8 @@
-import * as mdc from "material-components-web"
-
-import isColour from "is-color"
-
-import fs from "../utils/fs"
-
 import path from "path"
+import * as mdc from "material-components-web"
+import isColour from "is-color"
+import fs from "fs-extra"
+import _ from "lodash"
 
 const html = fs.readFileSync(path.join(__dirname, "app.html"), "utf8")
 
@@ -24,7 +22,7 @@ const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
 
 import esImport from "../utils/es-import"
 
-const depAllowed = (id, name) => name.startsWith(".") || Object.keys(appsdb.get(id).dependencies).includes(name)
+const depAllowed = (id, name) => name.startsWith(".") || _.has(appsdb.get(id).dependencies, name)
 
 /**
 * App Window.
@@ -53,15 +51,13 @@ class AppWindow extends HTMLElement {
             el.find(".mdc-top-app-bar__title").text(host.attr("data-name"))
 
             const themecolour = host.attr("data-theme")
-            if (isColour(themecolour)) {
-                el.find(".app__header").css("background-color", themecolour)
-            }
+            if (isColour(themecolour)) el.find(".app__header").css("background-color", themecolour)
 
             new ResizeObserver((entries) => {
                 entries.forEach(({ contentRect }) => {
                     el.find(".app__header, .app__container").css(
                         "width",
-                        contentRect.width
+                        contentRect.width,
                     )
                     el.find(".app__content").css("height", contentRect.height)
                 })
@@ -73,7 +69,9 @@ class AppWindow extends HTMLElement {
             })
             mdc.autoInit(el.get(0))
             el.find(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-                (_, { MDCRipple }) => (MDCRipple.unbounded = true)
+                (_, { MDCRipple }) => {
+                    MDCRipple.unbounded = true
+                },
             )
 
             el.find(".app__close").click(() => host.remove())
@@ -83,15 +81,15 @@ class AppWindow extends HTMLElement {
             el.find(".app__header, .app__container, .resizable").css("width", width)
             el.find(".app__content, .resizable").css("height", height)
 
-            const contentWindow = el.find("iframe").get(0).contentWindow
+            const { contentWindow } = el.find("iframe").get(0)
             if (appsdb.get(host.attr("data-id")).elevated) {
                 defineReadOnly(contentWindow, "require", (name) => {
                     if (depAllowed(host.attr("data-id"), name)) return require(name)
-                    else throw new Error("Not allowed to access dependency!")
+                    throw new Error("Not allowed to access dependency!")
                 })
                 defineReadOnly(contentWindow, "import", (name) => {
                     if (depAllowed(host.attr("data-id"), name)) return esImport(name)
-                    else throw new Error("Not allowed to access dependency!")
+                    throw new Error("Not allowed to access dependency!")
                 })
             }
         })

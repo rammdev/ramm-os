@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/electron"
 Sentry.init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
 
 import { remote } from "electron"
@@ -7,28 +6,27 @@ const mainWindow = remote.getCurrentWindow()
 const eapp = remote.app
 
 import path from "path"
+import * as Sentry from "@sentry/electron"
 
-// import Vue from "vue/dist/vue.min.js"
+// Import Vue from "vue/dist/vue.min.js"
 // Vue.config.productionTip = false
 
-import isUrl from "is-url"
+import isURL from "is-url-superb"
 
-import dirs from "./utils/data/dirs"
-
-import fs from "./utils/fs"
+import fs from "fs-extra"
 
 import dayjs from "dayjs"
 
-import requestjson from "./utils/requestjson"
 
-fs.ensureDir(dirs.temp)
 fs.ensureDir(dirs.store)
 
 import * as mdc from "material-components-web"
 
+import Store from "electron-store"
+import got from "./utils/got"
 import installApp from "./lib/install-app"
 
-import Store from "electron-store"
+import dirs from "./utils/data/dirs"
 
 const appsdb = new Store({
     cwd: path.join("ramm-os", "apps"),
@@ -40,7 +38,7 @@ import handleError from "./lib/handle-error"
 
 customElements.define("app-window", AppWindow)
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
     window.$ = require("jquery")
 
     // Define Vue app
@@ -52,7 +50,9 @@ window.addEventListener("load", () => {
 
     // Fix the ripples of each icon button
     $(".mdc-icon-button[data-mdc-auto-init=\"MDCRipple\"]").each(
-        (_, { MDCRipple }) => (MDCRipple.unbounded = true)
+        (_, { MDCRipple }) => {
+            MDCRipple.unbounded = true
+        },
     )
 
     $(".action__close").click(() => mainWindow.close())
@@ -65,7 +65,7 @@ window.addEventListener("load", () => {
             $(".action__full-text").html("Windowed Mode")
         } else {
             $(".action__full svg").html(
-                "<path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z\"/>"
+                "<path fill=\"none\" d=\"M0 0h24v24H0V0z\"/><path d=\"M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z\"/>",
             )
             $(".action__full").attr("aria-label", "Fullscreen Mode")
             $(".action__full-text").html("Fullscreen Mode")
@@ -87,51 +87,55 @@ window.addEventListener("load", () => {
             .get(0)
             .MDCMenu.setAbsolutePosition(
                 $(window).width() - 16,
-                $(window).height() - 80
+                $(window).height() - 80,
             )
     }
 
     $(window).on("resize", windowResized)
     $(window).trigger("resize")
 
-    $(".footer__apps").click(() => $(".app__drawer").get(0).MDCMenu.open = !$(".app__drawer").get(0).MDCMenu.open)
+    $(".footer__apps").click(() => {
+        $(".app__drawer").get(0).MDCMenu.open = !$(".app__drawer").get(0).MDCMenu.open
+    })
 
     $(".install__start").click(() =>
         $(".install__dialog")
             .get(0)
-            .MDCDialog.open()
+            .MDCDialog.open(),
     )
 
     $(".install__dialog")
         .get(0)
-        .MDCDialog.listen("MDCDialog:closing", ({ detail }) => {
+        .MDCDialog.listen("MDCDialog:closing", async ({ detail }) => {
             // Testing string: json:%7B%22type%22:%22ramm-app%22,%22spec%22:0,%22id%22:%22hello-world%22,%22name%22:%22Hello%20World%22%7D
             if (detail.action === "install") {
                 if ($(".install__uri").get(0).MDCTextField.value === "") {
                     return
                 }
+
                 const uri = $(".install__uri").get(0).MDCTextField.value
-                if (isUrl(uri)) {
-                    installApp(uri)
-                    return
+                try {
+                    if (isURL(uri)) installApp(uri)
+                    else {
+                        const { protocol } = new URL(uri)
+                        if (protocol in ["http:", "https:"]) {
+                            const { body } = await got(uri).json()
+                            installApp(body)
+                        } else if (protocol === "json:") {
+                            installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
+                        } else if (protocol === "file:") {
+                            const data = await fs.readJSON(decodeURI(uri).replace("file:///", ""), "utf8")
+                            installApp(data)
+                        } else {
+                            const data = await fs.readFile(path.resolve(uri), "utf8")
+                            installApp(data)
+                        }
+
+                        $(".install__uri").get(0).MDCTextField.value = ""
+                    }
+                } catch (err) {
+                    handleError(err)
                 }
-                const protocol = new URL(uri).protocol
-                if (protocol in ["http:", "https:"]) {
-                    requestjson(uri)
-                        .then((body) => installApp(body))
-                        .catch(handleError)
-                } else if (protocol === "json:") {
-                    installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
-                } else if (protocol === "file:") {
-                    fs.readFile(decodeURI(uri).replace("file:///", ""), "utf8")
-                        .then((data) => installApp(JSON.parse(data)))
-                        .catch(handleError)
-                } else {
-                    fs.readFile(path.resolve(uri), "utf8")
-                        .then((data) => installApp(JSON.parse(data)))
-                        .catch(handleError)
-                }
-                $(".install__uri").get(0).MDCTextField.value = ""
             }
         })
 
@@ -141,7 +145,7 @@ window.addEventListener("load", () => {
         console.warn("open-url", `You arrived from: ${url}`)
     })
 
-    $.fn.makeDraggable = function() {
+    $.fn.makeDraggable = function () {
         let pos1 = 0
         let pos2 = 0
         let pos3 = 0
@@ -209,7 +213,7 @@ window.addEventListener("load", () => {
         {
             alert: false,
             internal: true,
-        }
+        },
     )
 
     installApp(
@@ -234,7 +238,7 @@ window.addEventListener("load", () => {
         {
             alert: false,
             internal: true,
-        }
+        },
     )
     window.require = require
     installApp(
@@ -253,6 +257,6 @@ window.addEventListener("load", () => {
         {
             alert: false,
             internal: true,
-        }
+        },
     )
 })

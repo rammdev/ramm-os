@@ -1,12 +1,11 @@
-import pythonBridge from "python-bridge"
-
 import path from "path"
+import pythonBridge from "python-bridge"
+import fs from "fs-extra"
 
-import fs from "./fs"
-
-export default (filepath) => {
+export default async (filepath) => {
     const python = pythonBridge({ cwd: path.basename(path.dirname(filepath)) })
-    return fs.readFile(filepath, "utf8")
-        .then((data) => python.ex(data))
-        .finally(() => python.end())
+    const fileData = await fs.readFile(filepath, "utf8")
+    const data = await python(fileData)
+    python.end()
+    return data
 }
