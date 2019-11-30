@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/electron"
-Sentry.init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
+import { init } from "@sentry/electron"
+init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
 
 import { app, BrowserWindow } from "electron" // eslint-disable-line import/order
 

@@ -145,7 +145,7 @@ window.addEventListener("load", async () => {
         console.warn("open-url", `You arrived from: ${url}`)
     })
 
-    $.fn.makeDraggable = function () {
+    $.fn.makeDraggable = function() {
         let pos1 = 0
         let pos2 = 0
         let pos3 = 0

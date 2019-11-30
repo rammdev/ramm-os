@@ -15,7 +15,7 @@
         "lint": "xo"
     },
     "dependencies": {
-        "@sentry/electron": "^0.17.4",
+        "@sentry/electron": "^1.0.0",
         "auto-launch": "^5.0.5",
         "bluebird": "^3.7.1",
         "dayjs": "^1.8.16",
@@ -53,14 +53,15 @@
         "@electron-forge/maker-rpm": "^6.0.0-beta.45",
         "@electron-forge/maker-squirrel": "^6.0.0-beta.45",
         "@electron-forge/maker-zip": "^6.0.0-beta.45",
-        "electron": "^6.0.12",
+        "electron": "^7.1.2",
         "eslint-config-richienb": "^0.2.0",
-        "eslint-plugin-vue": "^5.2.3",
+        "eslint-plugin-vue": "^6.0.1",
         "xo": "^0.25.3"
     },
     "resolutions": {
         "vueify/cssnano/postcss-svgo/svgo/js-yaml": "^3.13.1",
-        "eslint": "6.6.0"
+        "@sentry/electron/@sentry/node/https-proxy-agent": "^3.0.1",
+        "eslint": "6.7.1"
     },
     "engines": {
         "node": ">=10"
