@@ -80,8 +80,10 @@ const installApp = async (conf, { alert = true, internal = false } = {}) => {
                 loadApp(conf, internal)
             }
         } else {
-            const filename = `${conf.id}.${getExtension(conf.source)}`
-            await download(conf.source, path.join(dirs.temp, filename), { extract: true })
+            await download(conf.source, dirs.temp, {
+                extract: true,
+                filename: `${conf.id}.${getExtension(conf.source)}`,
+            })
             appsdb.set(conf.id, conf)
             if (conf.elevated && conf.dependencies) {
                 const deps = _
