@@ -5,7 +5,7 @@ import temp from "pkg-temp"
 
 export default {
     temp, // Temporary directory
-    store: path.join(
+    data: path.join(
         remote.app.getPath("appData"),
         "ramm-os",
     ), // Storage directory

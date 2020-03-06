@@ -18,12 +18,12 @@ import fs from "fs-extra"
 import dayjs from "dayjs"
 
 
-fs.ensureDir(dirs.store)
+fs.ensureDir(dirs.data)
 
 import * as mdc from "material-components-web"
 
 import Store from "electron-store"
-import got from "./utils/got"
+import got from "got"
 import installApp from "./lib/install-app"
 
 import dirs from "./utils/data/dirs"
@@ -119,8 +119,7 @@ window.addEventListener("load", async () => {
                     else {
                         const { protocol } = new URL(uri)
                         if (protocol in ["http:", "https:"]) {
-                            const { body } = await got(uri).json()
-                            installApp(body)
+                            installApp(await got(uri).json())
                         } else if (protocol === "json:") {
                             installApp(JSON.parse(decodeURI(uri).replace("json:", "")))
                         } else if (protocol === "file:") {

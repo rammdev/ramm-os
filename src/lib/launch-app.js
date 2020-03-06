@@ -16,7 +16,7 @@ export default (
         .attr({
             src: internal ?
                 path.join(root, start) :
-                path.resolve(dirs.store, "appdata", id, root || "", start),
+                path.resolve(dirs.data, "appdata", id, root || "", start),
             frameborder: 0,
         })
         .addClass("resizable limit-size")

@@ -1,6 +1,4 @@
-import Promise from "bluebird"
 import yarn from "yarn-api"
+import pify from "pify"
 
-const yarnPromise = Promise.promisify(yarn)
-
-export default (...args) => yarnPromise(args)
+export default pify(yarn)

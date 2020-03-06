@@ -6,11 +6,11 @@ import isURL from "is-url-superb"
 import scrape from "website-scraper"
 import Store from "electron-store"
 import urlExists from "url-exist"
-import _ from "lodash"
 import download from "download"
-import got from "../utils/got"
+import is from "@sindresorhus/is"
+import got from "got"
+import getExtension from "file-ext"
 
-import getExtension from "../utils/get-extension"
 import dirs from "../utils/data/dirs"
 import yarn from "../utils/yarn"
 import snackBarMessage from "./snackbar-message"
@@ -24,17 +24,17 @@ const appsdb = new Store({
 
 const installApp = async (conf, { alert = true, internal = false } = {}) => {
     try {
-        if (_.isString(conf) && isURL(conf)) {
+        if (is.string(conf) && isURL(conf)) {
             const url = joinURL(conf, "ramm.app.json")
             if (await urlExists(url)) {
-                return (await got(url).json()).body
+                return await got(url).json()
             }
 
             const title = getURLTitle(conf)
-            if (await fs.pathExists(path.join(dirs.store, "appdata", title))) {
+            if (await fs.pathExists(path.join(dirs.data, "appdata", title))) {
                 await scrape({
                     urls: [conf],
-                    directory: path.join(dirs.store, "appdata", title),
+                    directory: path.join(dirs.data, "appdata", title),
                 })
                 const opts = {
                     id: title,
@@ -70,11 +70,7 @@ const installApp = async (conf, { alert = true, internal = false } = {}) => {
         } else if (internal) {
             appsdb.set(conf.id, conf)
             if (conf.elevated && conf.dependencies) {
-                const deps = _
-                    .chain(conf.dependencies)
-                    .entries()
-                    .map(([key, value]) => `${key}@${value}`)
-                    .value()
+                const deps = Object.entries(conf.dependencies).map(([key, value]) => `${key}@${value}`)
 
                 yarn("add", ...deps)
                 loadApp(conf, internal)
@@ -86,11 +82,7 @@ const installApp = async (conf, { alert = true, internal = false } = {}) => {
             })
             appsdb.set(conf.id, conf)
             if (conf.elevated && conf.dependencies) {
-                const deps = _
-                    .chain(conf.dependencies)
-                    .entries()
-                    .map(([key, value]) => `${key}@${value}`)
-                    .value()
+                const deps = Object.entries(conf.dependencies).map(([key, value]) => `${key}@${value}`)
 
                 yarn("add", ...deps)
                 loadApp(conf, internal)

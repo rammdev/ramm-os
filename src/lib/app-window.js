@@ -2,7 +2,6 @@ import path from "path"
 import * as mdc from "material-components-web"
 import isColour from "is-color"
 import fs from "fs-extra"
-import _ from "lodash"
 
 const html = fs.readFileSync(path.join(__dirname, "app.html"), "utf8")
 
@@ -22,7 +21,7 @@ const defineReadOnly = (obj, key, value) => Object.defineProperty(obj, key, {
 
 import esImport from "../utils/es-import"
 
-const depAllowed = (id, name) => name.startsWith(".") || _.has(appsdb.get(id).dependencies, name)
+const depAllowed = (id, name) => name.startsWith(".") || Object.keys(appsdb.get(id).dependencies).includes(name)
 
 /**
 * App Window.

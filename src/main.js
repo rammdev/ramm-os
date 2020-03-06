@@ -1,13 +1,13 @@
 import { init } from "@sentry/electron"
 init({ dsn: "https://cb72fbe9805041d8b198e64b3ed1f7d4@sentry.io/1507690" })
 
-import { app, BrowserWindow } from "electron" // eslint-disable-line import/order
+import { app, BrowserWindow } from "electron"
 
 import isDev from "electron-is-dev"
 
 require("update-electron-app")()
 
-import path from "path" // eslint-disable-line import/order
+import path from "path"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
