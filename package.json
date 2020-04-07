@@ -1,128 +1,128 @@
 {
-    "name": "ramm-os",
-    "productName": "RAMM OS",
-    "version": "1.0.0",
-    "description": "This is RAMM OS.",
-    "main": "src/index.js",
-    "bin": {
-        "rammos": "electron-forge start"
-    },
-    "scripts": {
-        "start": "electron-forge start",
-        "package": "electron-forge package",
-        "make": "electron-forge make",
-        "publish": "electron-forge publish",
-        "lint": "xo"
-    },
-    "dependencies": {
-        "@sentry/electron": "^1.2.1",
-        "@sindresorhus/is": "^2.1.0",
-        "auto-launch": "^5.0.5",
-        "dayjs": "^1.8.21",
-        "download": "^7.1.0",
-        "electron-is-dev": "^1.1.0",
-        "electron-squirrel-startup": "^1.0.0",
-        "electron-store": "^5.1.1",
-        "es-module-loader": "^2.3.0",
-        "esm": "^3.2.25",
-        "file-ext": "^1.0.0",
-        "fs-extra": "^8.1.0",
-        "get-url-title": "^1.1.0",
-        "got": "^10.6.0",
-        "http-vue-loader": "^1.4.2",
-        "is-color": "^1.0.2",
-        "is-url-superb": "^3.0.0",
-        "jquery": "^3.4.1",
-        "jquery.terminal": "^2.14.1",
-        "material-components-web": "^3.2.0",
-        "normalize.css": "^8.0.1",
-        "pify": "^5.0.0",
-        "python-bridge": "^1.1.0",
-        "update-electron-app": "^1.5.0",
-        "url-exist": "^2.0.0",
-        "url-join": "^4.0.1",
-        "vue": "^2.6.11",
-        "vueify": "^9.4.1",
-        "website-scraper": "^4.2.0",
-        "yarn-api": "^1.1.0"
-    },
-    "devDependencies": {
-        "@electron-forge/cli": "^6.0.0-beta.50",
-        "@electron-forge/maker-deb": "^6.0.0-beta.50",
-        "@electron-forge/maker-rpm": "^6.0.0-beta.50",
-        "@electron-forge/maker-squirrel": "^6.0.0-beta.50",
-        "@electron-forge/maker-zip": "^6.0.0-beta.50",
-        "electron": "^8.0.3",
-        "eslint-config-richienb": "^0.4.2",
-        "eslint-plugin-vue": "^6.2.1",
-        "xo": "^0.28.3"
-    },
-    "resolutions": {
-        "vueify/cssnano/postcss-svgo/svgo/js-yaml": "^3.13.1",
-        "@sentry/electron/@sentry/node/https-proxy-agent": "^3.0.1",
-        "eslint": "^6.8.0"
-    },
-    "engines": {
-        "node": ">=10"
-    },
-    "keywords": [],
-    "repository": "https://github.com/rammdev/ramm-os.git",
-    "author": "Richie Bendall <richiebendall@gmail.com>",
-    "license": "MIT",
-    "xo": {
-        "extends": "richienb",
-        "env": [
-            "jquery"
-        ],
-        "plugins": [
-            "vue"
-        ],
-        "rules": {
-            "node/no-unpublished-import": [
-                "error",
-                {
-                    "allowModules": [
-                        "electron"
-                    ]
-                }
-            ],
-            "no-global-assign": [
-                "error",
-                {
-                    "exceptions": [
-                        "require"
-                    ]
-                }
-            ],
-            "no-use-extend-native/no-use-extend-native": 0,
-            "import/no-unresolved": 0
-        }
-    },
-    "config": {
-        "forge": {
-            "packagerConfig": {},
-            "makers": [
-                {
-                    "name": "@electron-forge/maker-squirrel",
-                    "config": {
-                        "name": "ramm_os"
-                    }
-                },
-                {
-                    "name": "@electron-forge/maker-zip",
-                    "platforms": [
-                        "darwin"
-                    ]
-                },
-                {
-                    "name": "@electron-forge/maker-deb",
-                    "config": {}
-                },
-                {
-                    "name": "@electron-forge/maker-rpm",
-                    "config": {}
-                }
-            ]
-        }
-    }
+	"name": "ramm-os",
+	"productName": "RAMM OS",
+	"version": "1.0.0",
+	"description": "This is RAMM OS.",
+	"main": "source/index.js",
+	"bin": {
+		"rammos": "electron-forge start"
+	},
+	"scripts": {
+		"start": "electron-forge start",
+		"package": "electron-forge package",
+		"make": "electron-forge make",
+		"publish": "electron-forge publish",
+		"lint": "xo"
+	},
+	"dependencies": {
+		"@sentry/electron": "^1.2.1",
+		"@sindresorhus/is": "^2.1.0",
+		"auto-launch": "^5.0.5",
+		"dayjs": "^1.8.21",
+		"download": "^7.1.0",
+		"electron-is-dev": "^1.1.0",
+		"electron-squirrel-startup": "^1.0.0",
+		"electron-store": "^5.1.1",
+		"es-module-loader": "^2.3.0",
+		"esm": "^3.2.25",
+		"file-ext": "^1.0.0",
+		"fs-extra": "^8.1.0",
+		"get-url-title": "^1.1.0",
+		"got": "^10.6.0",
+		"http-vue-loader": "^1.4.2",
+		"is-color": "^1.0.2",
+		"is-url-superb": "^3.0.0",
+		"jquery": "^3.4.1",
+		"jquery.terminal": "^2.14.1",
+		"material-components-web": "^3.2.0",
+		"normalize.css": "^8.0.1",
+		"pify": "^5.0.0",
+		"python-bridge": "^1.1.0",
+		"update-electron-app": "^1.5.0",
+		"url-exist": "^2.0.0",
+		"url-join": "^4.0.1",
+		"vue": "^2.6.11",
+		"vueify": "^9.4.1",
+		"website-scraper": "^4.2.0",
+		"yarn-api": "^1.1.0"
+	},
+	"devDependencies": {
+		"@electron-forge/cli": "^6.0.0-beta.50",
+		"@electron-forge/maker-deb": "^6.0.0-beta.50",
+		"@electron-forge/maker-rpm": "^6.0.0-beta.50",
+		"@electron-forge/maker-squirrel": "^6.0.0-beta.50",
+		"@electron-forge/maker-zip": "^6.0.0-beta.50",
+		"electron": "^8.0.3",
+		"eslint-config-richienb": "^0.4.2",
+		"eslint-plugin-vue": "^6.2.1",
+		"xo": "^0.28.3"
+	},
+	"resolutions": {
+		"vueify/cssnano/postcss-svgo/svgo/js-yaml": "^3.13.1",
+		"@sentry/electron/@sentry/node/https-proxy-agent": "^3.0.1",
+		"eslint": "^6.8.0"
+	},
+	"engines": {
+		"node": ">=10"
+	},
+	"keywords": [],
+	"repository": "https://github.com/rammdev/ramm-os.git",
+	"author": "Richie Bendall <richiebendall@gmail.com>",
+	"license": "MIT",
+	"xo": {
+		"extends": "richienb",
+		"env": [
+			"jquery"
+		],
+		"plugins": [
+			"vue"
+		],
+		"rules": {
+			"node/no-unpublished-import": [
+				"error",
+				{
+					"allowModules": [
+						"electron"
+					]
+				}
+			],
+			"no-global-assign": [
+				"error",
+				{
+					"exceptions": [
+						"require"
+					]
+				}
+			],
+			"no-use-extend-native/no-use-extend-native": 0,
+			"import/no-unresolved": 0
+		}
+	},
+	"config": {
+		"forge": {
+			"packagerConfig": {},
+			"makers": [
+				{
+					"name": "@electron-forge/maker-squirrel",
+					"config": {
+						"name": "ramm_os"
+					}
+				},
+				{
+					"name": "@electron-forge/maker-zip",
+					"platforms": [
+						"darwin"
+					]
+				},
+				{
+					"name": "@electron-forge/maker-deb",
+					"config": {}
+				},
+				{
+					"name": "@electron-forge/maker-rpm",
+					"config": {}
+				}
+			]
+		}
+	}
 }
