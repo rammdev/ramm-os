@@ -37,7 +37,6 @@
         "material-components-web": "^3.2.0",
         "normalize.css": "^8.0.1",
         "pify": "^5.0.0",
-        "pkg-temp": "^1.1.1",
         "python-bridge": "^1.1.0",
         "update-electron-app": "^1.5.0",
         "url-exist": "^2.0.0",
@@ -54,9 +53,9 @@
         "@electron-forge/maker-squirrel": "^6.0.0-beta.50",
         "@electron-forge/maker-zip": "^6.0.0-beta.50",
         "electron": "^8.0.3",
-        "eslint-config-richienb": "^0.2.0",
+        "eslint-config-richienb": "^0.4.2",
         "eslint-plugin-vue": "^6.2.1",
-        "xo": "^0.26.1"
+        "xo": "^0.28.3"
     },
     "resolutions": {
         "vueify/cssnano/postcss-svgo/svgo/js-yaml": "^3.13.1",
@@ -95,7 +94,8 @@
                     ]
                 }
             ],
-            "no-use-extend-native/no-use-extend-native": 0
+            "no-use-extend-native/no-use-extend-native": 0,
+            "import/no-unresolved": 0
         }
     },
     "config": {
